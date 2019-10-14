@@ -45,7 +45,7 @@ public class TaskController {
                 ));
     }
 
-    @ApiOperation("Get all")
+    @ApiOperation("Danh sách các task")
     @GetMapping
     public Map<String, MyThreadStatus> getAll() {
         return taskService.findAll();
