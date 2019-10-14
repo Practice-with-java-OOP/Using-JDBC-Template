@@ -13,6 +13,7 @@ import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -111,53 +112,20 @@ public class TaskService {
 //        return null;
 //    }
 
-    public Boolean createFetchingTask() {
-        taskExecutor.execute(new MyThread() {
+    @Autowired
+    @Qualifier("branchThread")
+    private MyThread branchThread;
 
-            @Override
-            public void run() {
-                status = MyThreadStatus.RUNNING;
-                taskRepository.updateThread(Thread.currentThread().getName(), status);
-                try {
-                    if (Utils.SESSION_ID.isEmpty()) {
-                        LoginResponse loginResponse = pos365RetrofitService.login(new LoginRequest("admin", "Cosalon@2019")).execute().body();
-                        if (loginResponse != null) {
-                            Utils.SESSION_ID = loginResponse.getSessionId();
-                        }
-                        LOGGER.info("loginResponse: {}", loginResponse != null ? loginResponse.toString() : null);
-                    }
-
-                    jdbcTemplate.execute("TRUNCATE TABLE p365_branchs");
-
-                    BaseResponse<BranchResponse> response = pos365RetrofitService.listBranchs(getMapHeaders2()).execute().body();
-                    LOGGER.info("Response: {}", response);
-
-//                    branchJpaRepository.saveAll(response.getResults());
-                    response.getResults().forEach(item -> {
-                        jdbcTemplate.update("INSERT  " +
-                                        "INTO " +
-                                        "    p365_branchs " +
-                                        "    (id, address, created_by, created_date, modified_by, modified_date, name, online, retailer_id)  " +
-                                        "  VALUES " +
-                                        "    (?,?,?,?,?,?,?,?,?)",
-                                item.getId(), item.getAddress(), item.getCreatedBy(), item.getCreatedDate(), item.getModifiedBy(), item.getModifiedDate(),
-                                item.getName(), item.getOnline(), item.getRetailerId());
-                    });
-                    jdbcTemplate.execute("COMMIT");
-
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                } finally {
-                    status = MyThreadStatus.DESTROYED;
-                    taskRepository.updateThread(Thread.currentThread().getName(), status);
-                }
+    public Boolean createFetchingTask() throws Exception {
+        if (Utils.SESSION_ID.isEmpty()) {
+            LoginResponse loginResponse = pos365RetrofitService.login(new LoginRequest("admin", "Cosalon@2019")).execute().body();
+            if (loginResponse != null) {
+                Utils.SESSION_ID = loginResponse.getSessionId();
             }
-        });
+            LOGGER.info("loginResponse: {}", loginResponse != null ? loginResponse.toString() : null);
+        }
+
+        taskExecutor.execute(branchThread);
         return true;
     }
 
