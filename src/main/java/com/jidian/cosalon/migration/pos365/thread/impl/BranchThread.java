@@ -14,6 +14,11 @@ public class BranchThread extends MyThread {
 
 
     @Override
+    public String getName() {
+        return "BranchThread";
+    }
+
+    @Override
     public void doRun() {
         try {
             jdbcTemplate.execute("TRUNCATE TABLE p365_branchs");

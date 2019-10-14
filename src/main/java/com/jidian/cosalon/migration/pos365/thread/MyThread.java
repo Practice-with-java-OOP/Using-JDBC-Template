@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 //@Component
 //@Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -39,12 +40,15 @@ public abstract class MyThread implements Runnable {
     public void init() {
         status = MyThreadStatus.IDLE;
         pos365RetrofitService = retrofit.create(Pos365RetrofitService.class);
+        taskRepository.updateThread(getName(), status);
     }
 
     @PreDestroy
     public void destroy() {
         status = MyThreadStatus.DESTROYED;
     }
+
+    public abstract String getName();
 
     public Map<String, String> getMapHeaders2() {
         Map<String, String> headers = new HashMap<>();
@@ -57,14 +61,14 @@ public abstract class MyThread implements Runnable {
     public void run() {
         try {
             status = MyThreadStatus.RUNNING;
-            taskRepository.updateThread(Thread.currentThread().getName(), status);
+            taskRepository.updateThread(getName(), status);
             doRun();
             status = MyThreadStatus.IDLE;
-            taskRepository.updateThread(Thread.currentThread().getName(), status);
+            taskRepository.updateThread(getName(), status);
         } catch (Exception e) {
             e.printStackTrace();
             status = MyThreadStatus.IDLE;
-            taskRepository.updateThread(Thread.currentThread().getName(), status);
+            taskRepository.updateThread(getName(), status);
         }
     }
 
