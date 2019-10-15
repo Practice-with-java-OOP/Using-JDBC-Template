@@ -86,6 +86,10 @@ public class TaskService {
     private MyThread productOnHandByBranchThread;
 
     @Autowired
+    @Qualifier("returnThread")
+    private MyThread returnThread;
+
+    @Autowired
     @Qualifier("orderStockDetailThread")
     private MyThread orderStockDetailThread;
 
@@ -134,6 +138,7 @@ public class TaskService {
             }
         });
         taskExecutor.execute(productOnHandByBranchThread);
+        taskExecutor.execute(returnThread);
         taskExecutor.execute(() -> {
             try {
                 final Future futureOrderStock = taskExecutor.submit(orderStockThread);

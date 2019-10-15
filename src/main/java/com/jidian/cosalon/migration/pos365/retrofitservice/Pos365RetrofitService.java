@@ -6,6 +6,7 @@ import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductOnHandByBranch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Categories;
@@ -67,6 +68,9 @@ public interface Pos365RetrofitService {
 
     @GET("products/onhandbybranchs?format=json")
     Call<BaseResponse<Pos365ProductOnHandByBranch>> listProductOnHandByBranch(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
+
+    @GET("returns?format=json&Includes=Partner")
+    Call<BaseResponse<Pos365Return>> listReturn(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
 
     @GET("orderstock/detail?format=json")
     Call<BaseResponse<Pos365OrderStockDetail>> listOrderStockDetail(
