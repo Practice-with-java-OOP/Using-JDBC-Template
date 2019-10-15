@@ -47,9 +47,9 @@ public class TaskService {
     @Qualifier("branchThread")
     private MyThread branchThread;
 
-//    @Autowired
-//    @Qualifier("productThread")
-//    private MyThread productThread;
+    @Autowired
+    @Qualifier("productThread")
+    private MyThread productThread;
 
     @Autowired
     @Qualifier("userThread")
@@ -81,7 +81,7 @@ public class TaskService {
         }
 
         taskExecutor.execute(branchThread);
-//        taskExecutor.execute(productThread);
+        taskExecutor.execute(productThread);
         taskExecutor.execute(userThread);
         return true;
     }
