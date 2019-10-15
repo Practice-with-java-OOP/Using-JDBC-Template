@@ -2,6 +2,7 @@ package com.jidian.cosalon.migration.pos365.retrofitservice;
 
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Order;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductOnHandByBranch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
@@ -13,7 +14,10 @@ import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStock;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
+
 import java.util.Map;
+import java.util.concurrent.Executor;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -50,17 +54,23 @@ public interface Pos365RetrofitService {
 
     @GET("orders")
     Call<BaseResponse<Pos365Order>> listOrders(@HeaderMap Map<String, String> headers,
-        @Query("top") Integer top, @Query("skip") Integer skip);
+                                               @Query("top") Integer top, @Query("skip") Integer skip);
 
     @GET("products/history?format=json")
     Call<BaseResponse<Pos365ProductHistory>> listProductsHistory(
-        @HeaderMap Map<String, String> headers, @Query("top") Integer top,
-        @Query("skip") Integer skip,
-        @Query("ProductId") Long productId, @Query("BranchId") Long branchId);
+            @HeaderMap Map<String, String> headers, @Query("top") Integer top,
+            @Query("skip") Integer skip,
+            @Query("ProductId") Long productId, @Query("BranchId") Long branchId);
 
     @GET("https://cosalon.pos365.vn/api/orderstock?")
     Call<BaseResponse<Pos365OrderStock>> listOrderStock(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
 
     @GET("products/onhandbybranchs?format=json")
     Call<BaseResponse<Pos365ProductOnHandByBranch>> listProductOnHandByBranch(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
+
+    @GET("orderstock/detail?format=json")
+    Call<BaseResponse<Pos365OrderStockDetail>> listOrderStockDetail(
+            @HeaderMap Map<String, String> headers, @Query("top") Integer top,
+            @Query("skip") Integer skip,
+            @Query("PurchaseOrderId") Long orderStockId);
 }
