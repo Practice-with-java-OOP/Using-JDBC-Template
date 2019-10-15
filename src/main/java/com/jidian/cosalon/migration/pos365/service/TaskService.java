@@ -103,10 +103,10 @@ public class TaskService {
                 Utils.SESSION_ID, Utils.PID);
         }
 
-//        taskExecutor.execute(categoryThread);
-//        taskExecutor.execute(itemsThread);
-//        taskExecutor.execute(orderStockThread);
-//        taskExecutor.execute(transferThread);
+        taskExecutor.execute(categoryThread);
+        taskExecutor.execute(itemsThread);
+        taskExecutor.execute(orderStockThread);
+        taskExecutor.execute(transferThread);
         taskExecutor.execute(() -> {
             try {
                 final Future futureBranch = taskExecutor.submit(branchThread);
