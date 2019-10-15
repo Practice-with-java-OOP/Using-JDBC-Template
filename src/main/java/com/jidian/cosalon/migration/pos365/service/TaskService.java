@@ -55,6 +55,18 @@ public class TaskService {
     @Qualifier("userThread")
     private MyThread userThread;
 
+    @Autowired
+    @Qualifier("categoriesThread")
+    private MyThread categoryThread;
+
+    @Autowired
+    @Qualifier("itemsThread")
+    private MyThread itemsThread;
+
+    @Autowired
+    @Qualifier("orderStockThread")
+    private MyThread orderStockThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -82,7 +94,9 @@ public class TaskService {
 
         taskExecutor.execute(branchThread);
 //        taskExecutor.execute(productThread);
-        taskExecutor.execute(userThread);
+        taskExecutor.execute(categoryThread);
+        taskExecutor.execute(itemsThread);
+        taskExecutor.execute(orderStockThread);
         return true;
     }
 
