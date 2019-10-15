@@ -39,7 +39,8 @@ logging:
           client:
             RestTemplate: debug
         jdbc:
-          core: trace
+          core:
+            JdbcTemplate: trace
   com:
     jidian:
       cosalon:
