@@ -3,10 +3,12 @@ package com.jidian.cosalon.migration.pos365.retrofitservice;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Order;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.domainpos365.Post365Categories;
 import com.jidian.cosalon.migration.pos365.domainpos365.Post365Items;
+import com.jidian.cosalon.migration.pos365.domainpos365.Post365OrderStock;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
@@ -30,7 +32,7 @@ public interface Pos365RetrofitService {
     Call<BaseResponse<Pos365User>> listUsers(@HeaderMap Map<String, String> headers,
         @Query("top") Integer top, @Query("skip") Integer skip);
 
-    @GET("https://cosalon.pos365.vn/api/products?Type=1&CategoryId=-1")
+    @GET("products?Type=1&CategoryId=-1")
     Call<BaseResponse<Pos365Product>> listProducts(@HeaderMap Map<String, String> headers,
         @Query("top") Integer top, @Query("skip") Integer skip);
 
@@ -48,4 +50,13 @@ public interface Pos365RetrofitService {
     @GET("orders")
     Call<BaseResponse<Pos365Order>> listOrders(@HeaderMap Map<String, String> headers,
         @Query("top") Integer top, @Query("skip") Integer skip);
+
+    @GET("products/history?format=json")
+    Call<BaseResponse<Pos365ProductHistory>> listProductsHistory(
+        @HeaderMap Map<String, String> headers, @Query("top") Integer top,
+        @Query("skip") Integer skip,
+        @Query("ProductId") Long productId, @Query("BranchId") Long branchId);
+
+    @GET("orderstock?format=json")
+    Call<BaseResponse<Post365OrderStock>> listOrderStock(@HeaderMap Map<String, String> headers);
 }
