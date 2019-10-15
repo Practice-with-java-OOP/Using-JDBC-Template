@@ -1,4 +1,4 @@
-package com.jidian.cosalon.migration.pos365.dto;
+package com.jidian.cosalon.migration.pos365.domainpos365;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,7 +34,7 @@ import java.util.List;
 @Entity
 @Table(name = "p365_branchs")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BranchResponse {
+public class Pos365Branch {
     @JsonProperty("Id")
     @Id
     private Long id;

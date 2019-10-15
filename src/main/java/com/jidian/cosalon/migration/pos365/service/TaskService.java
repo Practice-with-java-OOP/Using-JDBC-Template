@@ -52,6 +52,10 @@ public class TaskService {
     @Qualifier("branchThread")
     private MyThread branchThread;
 
+    @Autowired
+    @Qualifier("productThread")
+    private MyThread productThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService.login(new LoginRequest("admin", "Cosalon@2019")).execute();
@@ -61,6 +65,7 @@ public class TaskService {
                         for (String s: cookie.split(";")) {
                             if (s.contains("ss-pid=")) {
                                 Utils.PID = s.trim();
+                                break;
                             }
                         }
                     }
@@ -75,6 +80,7 @@ public class TaskService {
         }
 
         taskExecutor.execute(branchThread);
+        taskExecutor.execute(productThread);
         return true;
     }
 

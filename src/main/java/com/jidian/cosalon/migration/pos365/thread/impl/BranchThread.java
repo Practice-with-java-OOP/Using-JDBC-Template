@@ -1,7 +1,7 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
-import com.jidian.cosalon.migration.pos365.dto.BranchResponse;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class BranchThread extends MyThread {
         try {
             jdbcTemplate.execute("TRUNCATE TABLE p365_branchs");
 
-            BaseResponse<BranchResponse> response = pos365RetrofitService.listBranchs(getMapHeaders2()).execute().body();
+            BaseResponse<Pos365Branch> response = pos365RetrofitService.listBranchs(getMapHeaders2()).execute().body();
             LOGGER.info("Response: {}", response);
 
 //                    branchJpaRepository.saveAll(response.getResults());
