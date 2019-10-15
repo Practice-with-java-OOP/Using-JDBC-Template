@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "p365_items")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Post365Items {
+public class Pos365Items {
     @JsonProperty("Id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

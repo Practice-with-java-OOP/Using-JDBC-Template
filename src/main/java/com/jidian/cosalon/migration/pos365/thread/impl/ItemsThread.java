@@ -1,6 +1,6 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Post365Items;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Items;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class ItemsThread extends MyThread {
         try {
             jdbcTemplate.execute("TRUNCATE TABLE p365_items");
             do {
-                BaseResponse<Post365Items> response = pos365RetrofitService.listItems(getMapHeaders2(), top, skip).execute().body();
+                BaseResponse<Pos365Items> response = pos365RetrofitService.listItems(getMapHeaders2(), top, skip).execute().body();
                 if (response != null) {
                     skip += top;
                     assumptionTotal = response.getCount();

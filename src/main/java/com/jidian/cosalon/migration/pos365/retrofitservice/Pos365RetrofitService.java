@@ -6,9 +6,9 @@ import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
-import com.jidian.cosalon.migration.pos365.domainpos365.Post365Categories;
-import com.jidian.cosalon.migration.pos365.domainpos365.Post365Items;
-import com.jidian.cosalon.migration.pos365.domainpos365.Post365OrderStock;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Categories;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Items;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStock;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
@@ -19,8 +19,6 @@ import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
-
-import java.util.Map;
 
 public interface Pos365RetrofitService {
 
@@ -43,11 +41,11 @@ public interface Pos365RetrofitService {
                                                      @Query("top") Integer top, @Query("skip") Integer skip);
 
     @GET("categories?format=json")
-    Call<BaseResponse<Post365Categories>> listCategories(@HeaderMap Map<String, String> headers);
+    Call<BaseResponse<Pos365Categories>> listCategories(@HeaderMap Map<String, String> headers);
 
     @GET("https://cosalon.pos365.vn/api/pricebooks/items")
-    Call<BaseResponse<Post365Items>> listItems(@HeaderMap Map<String, String> headers,
-        @Query("top") Integer top, @Query("skip") Integer skip);
+    Call<BaseResponse<Pos365Items>> listItems(@HeaderMap Map<String, String> headers,
+                                              @Query("top") Integer top, @Query("skip") Integer skip);
 
     @GET("orders")
     Call<BaseResponse<Pos365Order>> listOrders(@HeaderMap Map<String, String> headers,
@@ -60,5 +58,5 @@ public interface Pos365RetrofitService {
         @Query("ProductId") Long productId, @Query("BranchId") Long branchId);
 
     @GET("https://cosalon.pos365.vn/api/orderstock?")
-    Call<BaseResponse<Post365OrderStock>> listOrderStock(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
+    Call<BaseResponse<Pos365OrderStock>> listOrderStock(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
 }

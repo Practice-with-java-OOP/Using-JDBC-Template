@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "p365_order_stock")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Post365OrderStock {
+public class Pos365OrderStock {
     @JsonProperty("Id")
     @Id
     private Long id;
@@ -48,6 +48,8 @@ public class Post365OrderStock {
     private BigDecimal totalPayment;
     @JsonProperty("AccountId")
     private Long accountId;
+    @JsonProperty("PartnerId")
+    private Long partnerId;
     @JsonProperty("ExchangeRate")
     private BigDecimal exchangeRate;
     @JsonProperty("DeliveryDate")
