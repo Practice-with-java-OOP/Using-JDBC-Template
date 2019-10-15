@@ -3,6 +3,7 @@ package com.jidian.cosalon.migration.pos365.retrofitservice;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Order;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductOnHandByBranch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
@@ -59,4 +60,7 @@ public interface Pos365RetrofitService {
 
     @GET("https://cosalon.pos365.vn/api/orderstock?")
     Call<BaseResponse<Pos365OrderStock>> listOrderStock(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
+
+    @GET("products/onhandbybranchs?format=json")
+    Call<BaseResponse<Pos365ProductOnHandByBranch>> listProductOnHandByBranch(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
 }
