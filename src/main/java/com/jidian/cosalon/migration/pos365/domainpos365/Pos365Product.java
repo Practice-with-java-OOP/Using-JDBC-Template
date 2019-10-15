@@ -103,7 +103,7 @@ public class Pos365Product {
     private String largeUnitCode;
     @JsonProperty("BarCodes")
     @Transient
-    private List<Object> BarCodes;
+    private List<Object> barCodes;
 //    @JsonProperty("Category")
 //    @Transient
 //    private Category category;
