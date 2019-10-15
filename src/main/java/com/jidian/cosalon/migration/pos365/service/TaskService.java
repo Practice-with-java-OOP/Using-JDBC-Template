@@ -8,21 +8,16 @@ import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import com.jidian.cosalon.migration.pos365.thread.MyThreadStatus;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class TaskService {
@@ -56,13 +51,18 @@ public class TaskService {
 //    @Qualifier("productThread")
 //    private MyThread productThread;
 
+    @Autowired
+    @Qualifier("userThread")
+    private MyThread userThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
-            Response<LoginResponse> response = pos365RetrofitService.login(new LoginRequest("admin", "Cosalon@2019")).execute();
+            Response<LoginResponse> response = pos365RetrofitService
+                .login(new LoginRequest("admin", "Cosalon@2019")).execute();
             if (response.headers() != null && response.headers().values("Set-Cookie") != null) {
                 response.headers().values("Set-Cookie").forEach(cookie -> {
                     if (cookie.contains("ss-pid=")) {
-                        for (String s: cookie.split(";")) {
+                        for (String s : cookie.split(";")) {
                             if (s.contains("ss-pid=")) {
                                 Utils.PID = s.trim();
                                 break;
@@ -75,12 +75,14 @@ public class TaskService {
             if (loginResponse != null) {
                 Utils.SESSION_ID = loginResponse.getSessionId();
             }
-            LOGGER.info("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}", loginResponse != null ? loginResponse.toString() : null,
-                    Utils.SESSION_ID, Utils.PID);
+            LOGGER.info("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}",
+                loginResponse != null ? loginResponse.toString() : null,
+                Utils.SESSION_ID, Utils.PID);
         }
 
         taskExecutor.execute(branchThread);
 //        taskExecutor.execute(productThread);
+        taskExecutor.execute(userThread);
         return true;
     }
 
