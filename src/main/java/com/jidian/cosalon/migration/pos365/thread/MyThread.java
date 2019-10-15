@@ -53,7 +53,7 @@ public abstract class MyThread implements Runnable {
     public Map<String, String> getMapHeaders2() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
-        headers.put("Cookie", "ss-id=" + Utils.SESSION_ID + ";ss-pid=EHRpxOv1STmpoZkmWLF4");
+        headers.put("Cookie", "ss-id=" + Utils.SESSION_ID + ";" + Utils.PID);
         return headers;
     }
 
