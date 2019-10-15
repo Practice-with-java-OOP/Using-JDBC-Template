@@ -9,12 +9,13 @@ import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import com.jidian.cosalon.migration.pos365.thread.MyThreadStatus;
 import java.util.Map;
+import java.util.concurrent.Future;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -25,7 +26,7 @@ public class TaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
 
     @Autowired
-    private TaskExecutor taskExecutor;
+    private ThreadPoolTaskExecutor taskExecutor;
 
     @Autowired
     private TaskRepository taskRepository;
@@ -62,6 +63,10 @@ public class TaskService {
     @Autowired
     @Qualifier("transferThread")
     private MyThread transferThread;
+
+    @Autowired
+    @Qualifier("orderThread")
+    private MyThread orderThread;
 
     @Autowired
     @Qualifier("categoriesThread")
@@ -102,11 +107,25 @@ public class TaskService {
 
         taskExecutor.execute(branchThread);
         taskExecutor.execute(productThread);
+        taskExecutor.execute(userThread);
         taskExecutor.execute(categoryThread);
         taskExecutor.execute(itemsThread);
         taskExecutor.execute(orderStockThread);
-        taskExecutor.execute(productHistoryThread);
         taskExecutor.execute(transferThread);
+        taskExecutor.execute(orderThread);
+
+        taskExecutor.execute(() -> {
+            try {
+                final Future futureBranch = taskExecutor.submit(branchThread);
+                final Future futureProduct = taskExecutor.submit(productThread);
+                futureBranch.get();
+                futureProduct.get();
+
+                taskExecutor.execute(productHistoryThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
         return true;
     }
 
