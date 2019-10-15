@@ -3,6 +3,8 @@ package com.jidian.cosalon.migration.pos365.retrofitservice;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
+import com.jidian.cosalon.migration.pos365.domainpos365.Post365Categories;
+import com.jidian.cosalon.migration.pos365.domainpos365.Post365Items;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
@@ -34,4 +36,10 @@ public interface Pos365RetrofitService {
     @GET("transfers")
     Call<BaseResponse<Pos365Transfer>> listTransfers(@HeaderMap Map<String, String> headers,
         @Query("top") Integer top, @Query("skip") Integer skip);
+
+    @GET("categories?format=json")
+    Call<BaseResponse<Post365Categories>> listCategories(@HeaderMap Map<String, String> headers);
+
+    @GET("https://cosalon.pos365.vn/api/pricebooks/items")
+    Call<BaseResponse<Post365Items>> listItems(@HeaderMap Map<String, String> headers, @Query("top") Integer top, @Query("skip") Integer skip);
 }
