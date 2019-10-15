@@ -47,13 +47,21 @@ public class TaskService {
     @Qualifier("branchThread")
     private MyThread branchThread;
 
-//    @Autowired
-//    @Qualifier("productThread")
-//    private MyThread productThread;
+    @Autowired
+    @Qualifier("productThread")
+    private MyThread productThread;
 
     @Autowired
     @Qualifier("userThread")
     private MyThread userThread;
+
+    @Autowired
+    @Qualifier("productHistoryThread")
+    private MyThread productHistoryThread;
+
+    @Autowired
+    @Qualifier("transferThread")
+    private MyThread transferThread;
 
     @Autowired
     @Qualifier("categoriesThread")
@@ -87,16 +95,18 @@ public class TaskService {
             if (loginResponse != null) {
                 Utils.SESSION_ID = loginResponse.getSessionId();
             }
-            LOGGER.info("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}",
+            LOGGER.debug("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}",
                 loginResponse != null ? loginResponse.toString() : null,
                 Utils.SESSION_ID, Utils.PID);
         }
 
         taskExecutor.execute(branchThread);
-//        taskExecutor.execute(productThread);
+        taskExecutor.execute(productThread);
         taskExecutor.execute(categoryThread);
         taskExecutor.execute(itemsThread);
         taskExecutor.execute(orderStockThread);
+        taskExecutor.execute(productHistoryThread);
+        taskExecutor.execute(transferThread);
         return true;
     }
 
