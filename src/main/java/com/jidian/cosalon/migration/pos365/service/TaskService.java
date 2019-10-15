@@ -107,22 +107,22 @@ public class TaskService {
                 Utils.SESSION_ID, Utils.PID);
         }
 
-//        taskExecutor.execute(categoryThread);
-//        taskExecutor.execute(itemsThread);
-//        taskExecutor.execute(orderStockThread);
-//        taskExecutor.execute(transferThread);
-//        taskExecutor.execute(() -> {
-//            try {
-//                final Future futureBranch = taskExecutor.submit(branchThread);
-//                final Future futureProduct = taskExecutor.submit(productThread);
-//                futureBranch.get();
-//                futureProduct.get();
-//
-//                taskExecutor.execute(productHistoryThread);
-//            } catch (Exception e) {
-//                LOGGER.error(e.getMessage(), e);
-//            }
-//        });
+        taskExecutor.execute(categoryThread);
+        taskExecutor.execute(itemsThread);
+        taskExecutor.execute(orderStockThread);
+        taskExecutor.execute(transferThread);
+        taskExecutor.execute(() -> {
+            try {
+                final Future futureBranch = taskExecutor.submit(branchThread);
+                final Future futureProduct = taskExecutor.submit(productThread);
+                futureBranch.get();
+                futureProduct.get();
+
+                taskExecutor.execute(productHistoryThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
         taskExecutor.execute(productOnHandByBranchThread);
         return true;
     }
