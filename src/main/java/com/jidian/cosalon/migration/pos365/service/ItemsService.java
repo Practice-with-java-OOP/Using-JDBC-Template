@@ -3,13 +3,8 @@ package com.jidian.cosalon.migration.pos365.service;
 import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
-import com.jidian.cosalon.migration.pos365.repository.BranchJpaRepository;
-import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
-import com.jidian.cosalon.migration.pos365.thread.MyThreadStatus;
-import java.util.Map;
-import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +14,15 @@ import org.springframework.stereotype.Service;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-@Service
-public class TaskService {
+import javax.annotation.PostConstruct;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
+@Service
+public class ItemsService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoriesService.class);
 
     @Autowired
     private TaskExecutor taskExecutor;
-
-    @Autowired
-    private TaskRepository taskRepository;
-
-    @Autowired
-    private BranchJpaRepository branchJpaRepository;
 
     @Autowired
     private Retrofit retrofit;
@@ -44,33 +35,16 @@ public class TaskService {
     }
 
     @Autowired
-    @Qualifier("branchThread")
-    private MyThread branchThread;
+    @Qualifier("itemsThread")
+    private MyThread itemsThread;
 
-    @Autowired
-    @Qualifier("productThread")
-    private MyThread productThread;
-
-    @Autowired
-    @Qualifier("userThread")
-    private MyThread userThread;
-
-    @Autowired
-    @Qualifier("productHistoryThread")
-    private MyThread productHistoryThread;
-
-    @Autowired
-    @Qualifier("transferThread")
-    private MyThread transferThread;
-
-    public Boolean createFetchingTask() throws Exception {
+    public Boolean createFetchingItem() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
-            Response<LoginResponse> response = pos365RetrofitService
-                .login(new LoginRequest("admin", "Cosalon@2019")).execute();
+            Response<LoginResponse> response = pos365RetrofitService.login(new LoginRequest("admin", "Cosalon@2019")).execute();
             if (response.headers() != null && response.headers().values("Set-Cookie") != null) {
                 response.headers().values("Set-Cookie").forEach(cookie -> {
                     if (cookie.contains("ss-pid=")) {
-                        for (String s : cookie.split(";")) {
+                        for (String s: cookie.split(";")) {
                             if (s.contains("ss-pid=")) {
                                 Utils.PID = s.trim();
                                 break;
@@ -83,20 +57,11 @@ public class TaskService {
             if (loginResponse != null) {
                 Utils.SESSION_ID = loginResponse.getSessionId();
             }
-            LOGGER.debug("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}",
-                loginResponse != null ? loginResponse.toString() : null,
-                Utils.SESSION_ID, Utils.PID);
+            LOGGER.info("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}", loginResponse != null ? loginResponse.toString() : null,
+                    Utils.SESSION_ID, Utils.PID);
         }
 
-        taskExecutor.execute(branchThread);
-        taskExecutor.execute(productThread);
-        taskExecutor.execute(userThread);
-        taskExecutor.execute(productHistoryThread);
-        taskExecutor.execute(transferThread);
+        taskExecutor.execute(itemsThread);
         return true;
-    }
-
-    public Map<String, MyThreadStatus> findAll() {
-        return taskRepository.findAll();
     }
 }
