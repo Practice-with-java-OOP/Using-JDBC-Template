@@ -114,18 +114,18 @@ public class TaskService {
         taskExecutor.execute(transferThread);
         taskExecutor.execute(orderThread);
 
-//        taskExecutor.execute(() -> {
-//            try {
-//                final Future futureBranch = taskExecutor.submit(branchThread);
-//                final Future futureProduct = taskExecutor.submit(productThread);
-//                futureBranch.get();
-//                futureProduct.get();
-//
-//                taskExecutor.execute(productHistoryThread);
-//            } catch (Exception e) {
-//                LOGGER.error(e.getMessage(), e);
-//            }
-//        });
+        taskExecutor.execute(() -> {
+            try {
+                final Future futureBranch = taskExecutor.submit(branchThread);
+                final Future futureProduct = taskExecutor.submit(productThread);
+                futureBranch.get();
+                futureProduct.get();
+
+                taskExecutor.execute(productHistoryThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
         return true;
     }
 
