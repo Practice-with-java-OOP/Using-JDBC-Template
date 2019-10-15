@@ -55,6 +55,10 @@ public class TaskService {
     @Qualifier("userThread")
     private MyThread userThread;
 
+    @Autowired
+    @Qualifier("productHistoryThread")
+    private MyThread productHistoryThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -75,7 +79,7 @@ public class TaskService {
             if (loginResponse != null) {
                 Utils.SESSION_ID = loginResponse.getSessionId();
             }
-            LOGGER.info("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}",
+            LOGGER.debug("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}",
                 loginResponse != null ? loginResponse.toString() : null,
                 Utils.SESSION_ID, Utils.PID);
         }
@@ -83,6 +87,7 @@ public class TaskService {
         taskExecutor.execute(branchThread);
         taskExecutor.execute(productThread);
         taskExecutor.execute(userThread);
+        taskExecutor.execute(productHistoryThread);
         return true;
     }
 
