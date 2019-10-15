@@ -1,5 +1,6 @@
 package com.jidian.cosalon.migration.pos365.retrofitservice;
 
+import com.jidian.cosalon.migration.pos365.domainpos365.Post365Categories;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
@@ -19,4 +20,7 @@ public interface Pos365RetrofitService {
 
     @GET("branchs?format=json")
     Call<BaseResponse<Pos365Branch>> listBranchs(@HeaderMap Map<String, String> headers);
+
+    @GET("categories?format=json")
+    Call<BaseResponse<Post365Categories>> listCategories(@HeaderMap Map<String, String> headers);
 }
