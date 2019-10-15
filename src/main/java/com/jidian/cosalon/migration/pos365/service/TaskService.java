@@ -47,9 +47,9 @@ public class TaskService {
     @Qualifier("branchThread")
     private MyThread branchThread;
 
-//    @Autowired
-//    @Qualifier("productThread")
-//    private MyThread productThread;
+    @Autowired
+    @Qualifier("productThread")
+    private MyThread productThread;
 
     @Autowired
     @Qualifier("userThread")
@@ -58,6 +58,10 @@ public class TaskService {
     @Autowired
     @Qualifier("transferThread")
     private MyThread transferThread;
+
+    @Autowired
+    @Qualifier("orderThread")
+    private MyThread orderThread;
 
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
@@ -85,9 +89,11 @@ public class TaskService {
         }
 
         taskExecutor.execute(branchThread);
-//        taskExecutor.execute(productThread);
+        taskExecutor.execute(productThread);
         taskExecutor.execute(userThread);
         taskExecutor.execute(transferThread);
+        taskExecutor.execute(orderThread);
+
         return true;
     }
 

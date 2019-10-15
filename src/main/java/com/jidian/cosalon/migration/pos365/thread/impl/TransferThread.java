@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component("transferThread")
 public class TransferThread extends MyThread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BranchThread.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransferThread.class);
 
     @Override
     public String getName() {
