@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component("userThread")
 public class UserThread extends MyThread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BranchThread.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserThread.class);
 
     @Override
     public String getName() {
