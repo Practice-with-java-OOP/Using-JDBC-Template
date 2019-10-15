@@ -4,6 +4,8 @@ import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -21,6 +23,8 @@ import java.util.UUID;
 //@Component
 //@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public abstract class MyThread implements Runnable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyThread.class);
 
     @Autowired
     protected Retrofit retrofit;
@@ -59,6 +63,7 @@ public abstract class MyThread implements Runnable {
 
     @Override
     public void run() {
+        Long currMillis = System.currentTimeMillis();
         try {
             status = MyThreadStatus.RUNNING;
             taskRepository.updateThread(getName(), status);
@@ -69,6 +74,8 @@ public abstract class MyThread implements Runnable {
             e.printStackTrace();
             status = MyThreadStatus.IDLE;
             taskRepository.updateThread(getName(), status);
+        } finally {
+            LOGGER.info("{} run time elapsed: {}s", getName(), (System.currentTimeMillis() - currMillis) / 1000);
         }
     }
 
