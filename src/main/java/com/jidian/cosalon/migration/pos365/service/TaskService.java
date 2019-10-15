@@ -105,8 +105,6 @@ public class TaskService {
                 Utils.SESSION_ID, Utils.PID);
         }
 
-        taskExecutor.execute(branchThread);
-        taskExecutor.execute(productThread);
         taskExecutor.execute(userThread);
         taskExecutor.execute(categoryThread);
         taskExecutor.execute(itemsThread);
