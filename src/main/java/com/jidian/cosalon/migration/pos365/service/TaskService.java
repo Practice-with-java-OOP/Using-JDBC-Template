@@ -184,24 +184,6 @@ public class TaskService {
                 LOGGER.error(e.getMessage(), e);
             }
         });
-        taskExecutor.execute(() -> {
-            try {
-                final Future futureReturn = taskExecutor.submit(returnThread);
-                futureReturn.get();
-                taskExecutor.execute(returnDetailThread);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
-        taskExecutor.execute(() -> {
-            try {
-                final Future futureOrder = taskExecutor.submit(orderThread);
-                futureOrder.get();
-                taskExecutor.execute(orderDetailThread);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
 
         taskExecutor.execute(() -> {
             try {
