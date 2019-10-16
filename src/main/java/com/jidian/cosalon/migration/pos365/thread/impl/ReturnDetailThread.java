@@ -13,7 +13,7 @@ import java.util.List;
 @Component("returnDetailThread")
 public class ReturnDetailThread extends MyThread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderStockDetailThread.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReturnDetailThread.class);
 
     @Override
     public String getName() {
