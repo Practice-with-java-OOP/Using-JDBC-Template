@@ -136,12 +136,8 @@ public class TaskService {
         taskExecutor.execute(userThread);
         taskExecutor.execute(categoryThread);
         taskExecutor.execute(itemsThread);
-        taskExecutor.execute(orderStockThread);
-        taskExecutor.execute(transferThread);
-        taskExecutor.execute(orderThread);
         taskExecutor.execute(partnerThread);
         taskExecutor.execute(productOnHandByBranchThread);
-        taskExecutor.execute(returnThread);
 
         taskExecutor.execute(() -> {
             try {
@@ -155,10 +151,9 @@ public class TaskService {
                 LOGGER.error(e.getMessage(), e);
             }
         });
-        taskExecutor.execute(productOnHandByBranchThread);
-        taskExecutor.execute(returnThread);
         taskExecutor.execute(() -> {
             try {
+                LOGGER.info("Executing Order Stock Thread");
                 final Future futureOrderStock = taskExecutor.submit(orderStockThread);
                 futureOrderStock.get();
                 taskExecutor.execute(orderStockDetailThread);
@@ -168,6 +163,7 @@ public class TaskService {
         });
         taskExecutor.execute(() -> {
             try {
+                LOGGER.info("Executing Return Thread");
                 final Future futureReturn = taskExecutor.submit(returnThread);
                 futureReturn.get();
                 taskExecutor.execute(returnDetailThread);
@@ -177,6 +173,7 @@ public class TaskService {
         });
         taskExecutor.execute(() -> {
             try {
+                LOGGER.info("Executing Order Thread");
                 final Future futureOrder = taskExecutor.submit(orderThread);
                 futureOrder.get();
                 taskExecutor.execute(orderDetailThread);
