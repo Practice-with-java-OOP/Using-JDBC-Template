@@ -80,6 +80,10 @@ public class TaskService {
     @Qualifier("orderStockThread")
     private MyThread orderStockThread;
 
+    @Autowired
+    @Qualifier("partnerThread")
+    private MyThread partnerThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -111,6 +115,7 @@ public class TaskService {
         taskExecutor.execute(orderStockThread);
         taskExecutor.execute(transferThread);
         taskExecutor.execute(orderThread);
+        taskExecutor.execute(partnerThread);
 
         taskExecutor.execute(() -> {
             try {
@@ -124,6 +129,7 @@ public class TaskService {
                 LOGGER.error(e.getMessage(), e);
             }
         });
+
         return true;
     }
 
