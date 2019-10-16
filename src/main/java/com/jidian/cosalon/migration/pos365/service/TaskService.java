@@ -100,6 +100,14 @@ public class TaskService {
     @Qualifier("transfersDetailThread")
     private MyThread transfersDetailThread;
 
+    @Autowired
+    @Qualifier("returnDetailThread")
+    private MyThread returnDetailThread;
+
+    @Autowired
+    @Qualifier("orderDetailThread")
+    private MyThread orderDetailThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -128,12 +136,8 @@ public class TaskService {
         taskExecutor.execute(userThread);
         taskExecutor.execute(categoryThread);
         taskExecutor.execute(itemsThread);
-        taskExecutor.execute(orderStockThread);
-        taskExecutor.execute(transferThread);
-        taskExecutor.execute(orderThread);
         taskExecutor.execute(partnerThread);
         taskExecutor.execute(productOnHandByBranchThread);
-        taskExecutor.execute(returnThread);
 
         taskExecutor.execute(() -> {
             try {
@@ -147,12 +151,32 @@ public class TaskService {
                 LOGGER.error(e.getMessage(), e);
             }
         });
-
         taskExecutor.execute(() -> {
             try {
+                LOGGER.info("Executing Order Stock Thread");
                 final Future futureOrderStock = taskExecutor.submit(orderStockThread);
                 futureOrderStock.get();
                 taskExecutor.execute(orderStockDetailThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
+        taskExecutor.execute(() -> {
+            try {
+                LOGGER.info("Executing Return Thread");
+                final Future futureReturn = taskExecutor.submit(returnThread);
+                futureReturn.get();
+                taskExecutor.execute(returnDetailThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
+        taskExecutor.execute(() -> {
+            try {
+                LOGGER.info("Executing Order Thread");
+                final Future futureOrder = taskExecutor.submit(orderThread);
+                futureOrder.get();
+                taskExecutor.execute(orderDetailThread);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
