@@ -100,6 +100,10 @@ public class TaskService {
     @Qualifier("transfersDetailThread")
     private MyThread transfersDetailThread;
 
+    @Autowired
+    @Qualifier("returnDetailThread")
+    private MyThread returnDetailThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -125,34 +129,44 @@ public class TaskService {
                 Utils.SESSION_ID, Utils.PID);
         }
 
-        taskExecutor.execute(userThread);
-        taskExecutor.execute(categoryThread);
-        taskExecutor.execute(itemsThread);
-        taskExecutor.execute(orderStockThread);
-        taskExecutor.execute(transferThread);
-        taskExecutor.execute(orderThread);
+//        taskExecutor.execute(userThread);
+//        taskExecutor.execute(categoryThread);
+//        taskExecutor.execute(itemsThread);
+//        taskExecutor.execute(orderStockThread);
+//        taskExecutor.execute(transferThread);
+//        taskExecutor.execute(orderThread);
         taskExecutor.execute(partnerThread);
         taskExecutor.execute(productOnHandByBranchThread);
         taskExecutor.execute(returnThread);
 
+//        taskExecutor.execute(() -> {
+//            try {
+//                final Future futureBranch = taskExecutor.submit(branchThread);
+//                final Future futureProduct = taskExecutor.submit(productThread);
+//                futureBranch.get();
+//                futureProduct.get();
+//
+//                taskExecutor.execute(productHistoryThread);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+//        });
+//        taskExecutor.execute(productOnHandByBranchThread);
+        taskExecutor.execute(returnThread);
+//        taskExecutor.execute(() -> {
+//            try {
+//                final Future futureOrderStock = taskExecutor.submit(orderStockThread);
+//                futureOrderStock.get();
+//                taskExecutor.execute(orderStockDetailThread);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+//        });
         taskExecutor.execute(() -> {
             try {
-                final Future futureBranch = taskExecutor.submit(branchThread);
-                final Future futureProduct = taskExecutor.submit(productThread);
-                futureBranch.get();
-                futureProduct.get();
-
-                taskExecutor.execute(productHistoryThread);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
-
-        taskExecutor.execute(() -> {
-            try {
-                final Future futureOrderStock = taskExecutor.submit(orderStockThread);
-                futureOrderStock.get();
-                taskExecutor.execute(orderStockDetailThread);
+                final Future futureReturnDetail = taskExecutor.submit(returnThread);
+                futureReturnDetail.get();
+                taskExecutor.execute(returnDetailThread);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
