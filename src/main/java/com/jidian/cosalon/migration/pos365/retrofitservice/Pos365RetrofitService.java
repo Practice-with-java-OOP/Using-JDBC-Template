@@ -1,30 +1,29 @@
 package com.jidian.cosalon.migration.pos365.retrofitservice;
 
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Order;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductOnHandByBranch;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Categories;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Items;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Order;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStock;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductOnHandByBranch;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ReturnDetail;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
-
-import java.util.Map;
-import java.util.concurrent.Executor;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+
+import java.util.Map;
 
 public interface Pos365RetrofitService {
 
@@ -77,4 +76,10 @@ public interface Pos365RetrofitService {
             @HeaderMap Map<String, String> headers, @Query("top") Integer top,
             @Query("skip") Integer skip,
             @Query("PurchaseOrderId") Long orderStockId);
+
+    @GET("returns/detail?format=json")
+    Call<BaseResponse<Pos365ReturnDetail>> listReturnDetail(
+            @HeaderMap Map<String, String> headers, @Query("top") Integer top,
+            @Query("skip") Integer skip,
+            @Query("ReturnId") Long returnId);
 }
