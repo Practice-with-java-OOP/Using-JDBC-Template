@@ -4,6 +4,7 @@ import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Categories;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Items;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Order;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStock;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
@@ -24,6 +25,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 public interface Pos365RetrofitService {
 
@@ -82,4 +84,10 @@ public interface Pos365RetrofitService {
             @HeaderMap Map<String, String> headers, @Query("top") Integer top,
             @Query("skip") Integer skip,
             @Query("ReturnId") Long returnId);
+
+    @GET("orders/detail?format=json")
+    Call<BaseResponse<Pos365OrderDetail>> listOrderDetail(
+            @HeaderMap Map<String, String> headers, @Query("top") Integer top,
+            @Query("skip") Integer skip,
+            @Query("OrderId") Long orderId);
 }
