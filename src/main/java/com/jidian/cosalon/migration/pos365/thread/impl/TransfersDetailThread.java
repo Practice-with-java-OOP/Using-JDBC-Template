@@ -15,8 +15,6 @@ public class TransfersDetailThread extends MyThread {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransfersDetailThread.class);
     private int insertedTotal = 0;
     private int assumptionTotal = 0;
-    private int skip = 0;
-    private int top = 100;
     private int count = 0;
 
     @Override
@@ -37,7 +35,6 @@ public class TransfersDetailThread extends MyThread {
                             BaseResponse<Pos365TransfersDetail> response = pos365RetrofitService
                                 .listTransferDetails(getMapHeaders2(), transferId).execute().body();
                             if (response != null) {
-                                skip += top;
                                 assumptionTotal += response.getCount();
                             }
                             count = 0;
