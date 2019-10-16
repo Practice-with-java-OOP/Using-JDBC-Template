@@ -28,7 +28,7 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @ApiOperation("Hello World")
+//    @ApiOperation("Hello World")
 //    @GetMapping
     public List<Warehouse> hello() {
 //        return "Hello World!";
@@ -56,6 +56,17 @@ public class TaskController {
     public ResponseEntity createFetch() {
         try {
             return ResponseEntity.ok(taskService.createFetchingTask());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ApiOperation("Tạo mới task migrate dữ liệu từ bảng dữ liệu thô POS365 sang bảng dữ liệu của CoSalon IMS")
+    @PostMapping("/migrate")
+    public ResponseEntity createMigrate() {
+        try {
+            return ResponseEntity.ok(taskService.createMigrationTask());
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);

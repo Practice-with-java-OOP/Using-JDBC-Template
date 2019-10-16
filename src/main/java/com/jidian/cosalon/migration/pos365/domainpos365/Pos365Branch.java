@@ -37,30 +37,30 @@ import java.util.List;
 public class Pos365Branch {
     @JsonProperty("Id")
     @Id
-    private Long id;
+    protected Long id;
     @JsonProperty("Name")
-    private String name;
+    protected String name;
     @JsonProperty("Address")
-    private String address;
+    protected String address;
     @JsonProperty("RetailerId")
-    private Long retailerId;
+    protected Long retailerId;
     @JsonProperty("CreatedDate")
-    private String createdDate;
+    protected String createdDate;
     @JsonProperty("CreatedBy")
-    private Long createdBy;
+    protected Long createdBy;
     @JsonProperty("ModifiedBy")
-    private Long modifiedBy;
+    protected Long modifiedBy;
     @JsonProperty("ModifiedDate")
-    private String modifiedDate;
+    protected String modifiedDate;
     @JsonProperty("IsOnline")
-    private Boolean online;
+    protected Boolean online;
     @JsonProperty("PrintTemplates")
     @Transient
-    private List<Object> printTemplates;
+    protected List<Object> printTemplates;
     @JsonProperty("Transfers")
     @Transient
-    private List<Object> transfers;
+    protected List<Object> transfers;
     @JsonProperty("Transfers1")
     @Transient
-    private List<Object> transfers1;
+    protected List<Object> transfers1;
 }
