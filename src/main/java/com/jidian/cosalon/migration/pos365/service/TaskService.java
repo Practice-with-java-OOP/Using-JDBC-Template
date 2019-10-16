@@ -8,6 +8,9 @@ import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import com.jidian.cosalon.migration.pos365.thread.MyThreadStatus;
+import java.util.Map;
+import java.util.concurrent.Future;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +19,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
-import javax.annotation.PostConstruct;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 @Service
 public class TaskService {
@@ -97,10 +96,14 @@ public class TaskService {
     @Qualifier("orderStockDetailThread")
     private MyThread orderStockDetailThread;
 
+    @Autowired
+    @Qualifier("transfersDetailThread")
+    private MyThread transfersDetailThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
-                    .login(new LoginRequest("admin", "Cosalon@2019")).execute();
+                .login(new LoginRequest("admin", "Cosalon@2019")).execute();
             if (response.headers() != null && response.headers().values("Set-Cookie") != null) {
                 response.headers().values("Set-Cookie").forEach(cookie -> {
                     if (cookie.contains("ss-pid=")) {
@@ -118,8 +121,8 @@ public class TaskService {
                 Utils.SESSION_ID = loginResponse.getSessionId();
             }
             LOGGER.debug("loginResponse: {}, Utils.SESSION_ID={}, Utils.PID={}",
-                    loginResponse != null ? loginResponse.toString() : null,
-                    Utils.SESSION_ID, Utils.PID);
+                loginResponse != null ? loginResponse.toString() : null,
+                Utils.SESSION_ID, Utils.PID);
         }
 
         taskExecutor.execute(userThread);
@@ -150,6 +153,18 @@ public class TaskService {
                 final Future futureOrderStock = taskExecutor.submit(orderStockThread);
                 futureOrderStock.get();
                 taskExecutor.execute(orderStockDetailThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
+
+        taskExecutor.execute(() -> {
+            try {
+                LOGGER.info("Executing Transfer Thread");
+                final Future futureTransfer = taskExecutor.submit(transferThread);
+                futureTransfer.get();
+                LOGGER.info("Executing Transfer Detail Thread");
+                taskExecutor.execute(transfersDetailThread);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

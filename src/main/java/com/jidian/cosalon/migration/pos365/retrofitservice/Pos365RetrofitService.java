@@ -12,6 +12,7 @@ import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductOnHandByBranch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365TransfersDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
@@ -83,4 +84,8 @@ public interface Pos365RetrofitService {
     @GET("partners?GroupId=-1")
     Call<BaseResponse<Pos365Partner>> listPartner(@HeaderMap Map<String, String> headers,
         @Query("top") Integer top, @Query("skip") Integer skip, @Query("Type") Integer type);
+
+    @GET("transfers/detail?format=json")
+    Call<BaseResponse<Pos365TransfersDetail>> listTransferDetails(
+        @HeaderMap Map<String, String> headers, @Query("TransferId") Long transferId);
 }
