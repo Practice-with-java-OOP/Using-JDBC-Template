@@ -1,20 +1,21 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Items;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component("itemsThread")
-public class ItemsThread extends MyThread {
+@Component("returnThread")
+public class ReturnThread extends MyThread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemsThread.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReturnThread.class);
 
     @Override
     public String getName() {
-        return "itemsThread";
+        return "ReturnThread";
     }
 
     @Override
@@ -26,9 +27,9 @@ public class ItemsThread extends MyThread {
         int assumptionTotal = 0;
 
         try {
-            jdbcTemplate.execute("TRUNCATE TABLE p365_items");
+            jdbcTemplate.execute("TRUNCATE TABLE p365_return");
             do {
-                BaseResponse<Pos365Items> response = pos365RetrofitService.listItems(getMapHeaders2(), top, skip).execute().body();
+                BaseResponse<Pos365Return> response = pos365RetrofitService.listReturn(getMapHeaders2(), top, skip).execute().body();
                 if (response != null) {
                     skip += top;
                     assumptionTotal = response.getCount();
@@ -36,14 +37,14 @@ public class ItemsThread extends MyThread {
                 count = 0;
                 if (response != null && response.getResults() != null) {
                     count = response.getResults().size();
-                    //do id của dữ liệu hiện tại trả về đang = 0 hết nên đang để id tự động tăng.
                     response.getResults().forEach(item -> {
                         jdbcTemplate.update(
-                                "INSERT INTO p365_items " +
-                                        "    (product_id, name, attributes_name, code, cost, multi_unit, price, original_price, original_price_large_unit, price_large_unit) " +
-                                        "VALUES (?,?,?,?,?,?,?,?,?,?)",
-                                item.getProductId(), item.getName(), item.getAttributesName(), item.getCode(), item.getCost(), item.getMultiUnit(),
-                                item.getPrice(), item.getOriginalPrice(), item.getOriginalPriceLargeUnit(), item.getPriceLargeUnit());
+                                "INSERT INTO p365_return " +
+                                        "    (id, branch_id, code, created_by, created_date, description, discount, modified_by, modified_date, " +
+                                        "    retailer_id, return_date, status, total, total_payment) " +
+                                        "    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                item.getId(), item.getBranchId(), item.getCode(), item.getCreatedBy(), item.getCreatedDate(), item.getDescription(), item.getDiscount(), item.getModifiedBy(), item.getModifiedDate(),
+                                item.getRetailerId(), item.getReturnDate(), item.getStatus(), item.getTotal(), item.getTotalPayment());
                     });
                     jdbcTemplate.execute("COMMIT");
                     insertedTotal += response.getResults().size();

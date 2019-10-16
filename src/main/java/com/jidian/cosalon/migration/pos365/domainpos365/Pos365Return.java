@@ -9,49 +9,50 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "p365_order_stock")
+@Table(name = "p365_return")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Post365OrderStock {
+public class Pos365Return {
     @JsonProperty("Id")
     @Id
     private Long id;
     @JsonProperty("Code")
     private String code;
-    @JsonProperty("DocumentDate")
-    private Timestamp documentDate;
     @JsonProperty("BranchId")
     private Long branchId;
-    @JsonProperty("Status")
-    private int status;
-    @JsonProperty("ModifiedDate")
-    private Timestamp modifiedDate;
-    @JsonProperty("RetailerId")
-    private Long retailerId;
-    @JsonProperty("Discount")
-    private BigDecimal discount;
     @JsonProperty("CreatedDate")
-    private Timestamp createdDate;
+    private String createdDate;
     @JsonProperty("CreatedBy")
     private Long createdBy;
+    @JsonProperty("Status")
+    private Long status;
+    @JsonProperty("Description")
+    private String description;
+    @JsonProperty("RetailerId")
+    private Long retailerId;
+    @JsonProperty("ReturnDate")
+    private String returnDate;
+    @JsonProperty("ModifiedDate")
+    private String modifiedDate;
     @JsonProperty("ModifiedBy")
     private Long modifiedBy;
     @JsonProperty("Total")
     private BigDecimal total;
+    @JsonProperty("Discount")
+    private BigDecimal discount;
     @JsonProperty("TotalPayment")
     private BigDecimal totalPayment;
-    @JsonProperty("AccountId")
-    private Long accountId;
-    @JsonProperty("ExchangeRate")
-    private BigDecimal exchangeRate;
-    @JsonProperty("DeliveryDate")
-    private Timestamp deliveryDate;
-    @JsonProperty("VAT")
-    private BigDecimal vat;
+    @JsonProperty("AccountingTransactions")
+    @Transient
+    private List<Object> accountingTransactions;
+    @JsonProperty("ReturnDetails")
+    @Transient
+    private List<Object> returnDetails;
 }

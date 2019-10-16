@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "p365_categories")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Post365Categories {
+public class Pos365Categories {
     @JsonProperty("Id")
     @Id
     private Long id;

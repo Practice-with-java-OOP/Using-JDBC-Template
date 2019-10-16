@@ -1,6 +1,6 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Post365Categories;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Categories;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public class CategoriesThread extends MyThread {
         try {
             jdbcTemplate.execute("TRUNCATE TABLE p365_categories");
 
-            BaseResponse<Post365Categories> response = pos365RetrofitService.listCategories(getMapHeaders2()).execute().body();
+            BaseResponse<Pos365Categories> response = pos365RetrofitService.listCategories(getMapHeaders2()).execute().body();
             LOGGER.info("Response: {}", response);
 
 //                    branchJpaRepository.saveAll(response.getResults());

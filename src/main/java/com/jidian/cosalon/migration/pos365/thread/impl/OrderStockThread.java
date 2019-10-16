@@ -1,6 +1,6 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Post365OrderStock;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStock;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class OrderStockThread extends MyThread {
         try {
             jdbcTemplate.execute("TRUNCATE TABLE p365_order_stock");
             do {
-                BaseResponse<Post365OrderStock> response = pos365RetrofitService
+                BaseResponse<Pos365OrderStock> response = pos365RetrofitService
                     .listOrderStock(getMapHeaders2(), top, skip).execute().body();
                 if (response != null) {
                     skip += top;
@@ -41,14 +41,14 @@ public class OrderStockThread extends MyThread {
                         jdbcTemplate.update("INSERT INTO p365_order_stock " +
                                 " (id, code, document_date, branch_id, status, modified_date, retailer_id, discount, created_date, created_by,"
                                 +
-                                " modified_by, total, total_payment, account_id, exchange_rate, delivery_date, vat)  "
+                                " modified_by, total, total_payment, account_id,partner_id, exchange_rate, delivery_date, vat)  "
                                 +
-                                "  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                "  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                             item.getId(), item.getCode(), item.getDocumentDate(),
                             item.getBranchId(), item.getStatus(), item.getModifiedDate(),
                             item.getRetailerId(), item.getDiscount(), item.getCreatedDate(),
                             item.getCreatedBy(), item.getModifiedBy(), item.getTotal(),
-                            item.getTotalPayment(), item.getAccountId(), item.getExchangeRate(),
+                            item.getTotalPayment(), item.getAccountId(), item.getPartnerId(), item.getExchangeRate(),
                             item.getDeliveryDate(), item.getVat());
                     });
                     jdbcTemplate.execute("COMMIT");
