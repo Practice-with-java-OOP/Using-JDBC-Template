@@ -41,10 +41,10 @@ public class ReturnThread extends MyThread {
                         jdbcTemplate.update(
                                 "INSERT INTO p365_return " +
                                         "    (id, branch_id, code, created_by, created_date, description, discount, modified_by, modified_date, " +
-                                        "    retailer_id, return_date, status, total, total_payment) " +
-                                        "    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                        "    retailer_id, order_id, return_date, partner_id, status, total, total_payment) " +
+                                        "    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                                 item.getId(), item.getBranchId(), item.getCode(), item.getCreatedBy(), item.getCreatedDate(), item.getDescription(), item.getDiscount(), item.getModifiedBy(), item.getModifiedDate(),
-                                item.getRetailerId(), item.getReturnDate(), item.getStatus(), item.getTotal(), item.getTotalPayment());
+                                item.getRetailerId(), item.getOrderId(), item.getReturnDate(), item.getPartnerId(), item.getStatus(), item.getTotal(), item.getTotalPayment());
                     });
                     jdbcTemplate.execute("COMMIT");
                     insertedTotal += response.getResults().size();

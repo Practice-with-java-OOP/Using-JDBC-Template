@@ -37,8 +37,16 @@ public class Pos365Return {
     private String description;
     @JsonProperty("RetailerId")
     private Long retailerId;
+    @JsonProperty("OrderId")
+
+
+    private Long orderId;
     @JsonProperty("ReturnDate")
     private String returnDate;
+
+
+    @JsonProperty("PartnerId")
+    private Long partnerId;
     @JsonProperty("ModifiedDate")
     private String modifiedDate;
     @JsonProperty("ModifiedBy")

@@ -49,10 +49,10 @@ public class OrderDetailThread extends MyThread {
                                 response.getResults().forEach(item -> {
                                     jdbcTemplate.update(
                                             "INSERT INTO p365_order_detail " +
-                                                    "    (id, order_id, product_id, quantity, price, base_price, is_large_unit, conversion_value, coefficient, processed, sold_by_id) " +
-                                                    "    VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                                                    "    (id, order_id, product_id, quantity, price, base_price, is_large_unit, conversion_value, coefficient, processed, sold_by_id, assistant_by_id) " +
+                                                    "    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                                             item.getId(), item.getOrderId(), item.getProductId(), item.getQuantity(), item.getPrice(),item.getBasePrice(),
-                                            item.getIsLargeUnit(), item.getConversionValue(), item.getCoefficient(), item.getProcessed(), item.getSoldById());
+                                            item.getIsLargeUnit(), item.getConversionValue(), item.getCoefficient(), item.getProcessed(), item.getSoldById(), item.getAssistantById());
                                 });
                                 jdbcTemplate.execute("COMMIT");
                                 insertedTotal += response.getResults().size();

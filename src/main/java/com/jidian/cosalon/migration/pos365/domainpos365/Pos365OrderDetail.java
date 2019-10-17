@@ -41,4 +41,6 @@ public class Pos365OrderDetail {
     private int processed;
     @JsonProperty("SoldById")
     private Long soldById;
+    @JsonProperty("AssistantById")
+    private Long assistantById;
 }
