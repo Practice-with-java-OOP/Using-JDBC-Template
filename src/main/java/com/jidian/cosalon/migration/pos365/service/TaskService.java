@@ -210,7 +210,7 @@ public class TaskService {
     }
 
     public Boolean createMigrationTask() throws Exception {
-//        taskExecutor.execute(imsWarehouseThread);
+        taskExecutor.execute(imsWarehouseThread);
         taskExecutor.execute(imsChemicalThread);
         return true;
     }
