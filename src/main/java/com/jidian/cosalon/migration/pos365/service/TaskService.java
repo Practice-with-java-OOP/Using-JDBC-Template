@@ -112,6 +112,10 @@ public class TaskService {
     @Qualifier("imsWarehouseThread")
     private MyThread imsWarehouseThread;
 
+    @Autowired
+    @Qualifier("imsChemicalThread")
+    private MyThread imsChemicalThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -206,7 +210,8 @@ public class TaskService {
     }
 
     public Boolean createMigrationTask() throws Exception {
-        taskExecutor.execute(imsWarehouseThread);
+//        taskExecutor.execute(imsWarehouseThread);
+        taskExecutor.execute(imsChemicalThread);
         return true;
     }
 }

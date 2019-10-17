@@ -22,153 +22,153 @@ import java.util.List;
 public class Pos365Product {
     @JsonProperty("Id")
     @Id
-    private Long id;
+    protected Long id;
     @JsonProperty("OnHand")
-    private Long onHand;
+    protected Long onHand;
     @JsonProperty("TotalOnHand")
-    private Long totalOnHand;
+    protected Long totalOnHand;
     @JsonProperty("RecentPurchasePrice")
-    private Long recentPurchasePrice;
+    protected Long recentPurchasePrice;
     @JsonProperty("RecentPurchasePriceLargeUnit")
-    private Long recentPurchasePriceLargeUnit;
+    protected Long recentPurchasePriceLargeUnit;
     @JsonProperty("OnOrder")
-    private Long onOrder;
+    protected Long onOrder;
     @JsonProperty("MinQuantity")
-    private Long minQuantity;
+    protected Long minQuantity;
     @JsonProperty("MaxQuantity")
-    private Long maxQuantity;
+    protected Long maxQuantity;
     @JsonProperty("Cost")
-    private BigDecimal cost;
+    protected BigDecimal cost;
     @JsonProperty("PriceByBranch")
-    private BigDecimal priceByBranch;
+    protected BigDecimal priceByBranch;
     @JsonProperty("PriceByBranchLargeUnit")
-    private BigDecimal priceByBranchLargeUnit;
+    protected BigDecimal priceByBranchLargeUnit;
     @JsonProperty("CompareMinQuantity")
-    private Long compareMinQuantity;
+    protected Long compareMinQuantity;
     @JsonProperty("CompareMaxQuantity")
-    private Long compareMaxQuantity;
+    protected Long compareMaxQuantity;
     @JsonProperty("Code")
-    private String code;
+    protected String code;
     @JsonProperty("Name")
-    private String name;
+    protected String name;
     @JsonProperty("AttributesName")
-    private String attributesName;
+    protected String attributesName;
     @JsonProperty("CategoryId")
-    private Long categoryId;
+    protected Long categoryId;
     @JsonProperty("Price")
-    private BigDecimal price;
+    protected BigDecimal price;
     @JsonProperty("PriceLargeUnit")
-    private BigDecimal priceLargeUnit;
+    protected BigDecimal priceLargeUnit;
     @JsonProperty("ProductType")
-    private Long productType;
+    protected Long productType;
     @JsonProperty("ConversionValue")
-    private Long conversionValue;
+    protected Long conversionValue;
     @JsonProperty("Unit")
-    private String unit;
+    protected String unit;
     @JsonProperty("LargeUnit")
-    private String largeUnit;
+    protected String largeUnit;
     @JsonProperty("IsSerialNumberTracking")
-    private Boolean isSerialNumberTracking;
+    protected Boolean isSerialNumberTracking;
     @JsonProperty("CreatedDate")
-    private String createdDate;
+    protected String createdDate;
     @JsonProperty("CreatedBy")
-    private Long createdBy;
+    protected Long createdBy;
     @JsonProperty("ModifiedDate")
-    private String modifiedDate;
+    protected String modifiedDate;
     @JsonProperty("RetailerId")
-    private Long retailerId;
+    protected Long retailerId;
     @JsonProperty("IsPercentageOfTotalOrder")
-    private Boolean isPercentageOfTotalOrder;
+    protected Boolean isPercentageOfTotalOrder;
     @JsonProperty("SplitForSalesOrder")
-    private Boolean splitForSalesOrder;
+    protected Boolean splitForSalesOrder;
     @JsonProperty("OrderQuickNotes")
-    private String orderQuickNotes;
+    protected String orderQuickNotes;
     @JsonProperty("Printer")
-    private String printer;
+    protected String printer;
     @JsonProperty("BonusPoint")
-    private Long bonusPoint;
+    protected Long bonusPoint;
     @JsonProperty("BonusPointForAssistant")
-    private Long bonusPointForAssistant;
+    protected Long bonusPointForAssistant;
     @JsonProperty("BonusPointForAssistant2")
-    private Long bonusPointForAssistant2;
+    protected Long bonusPointForAssistant2;
     @JsonProperty("BonusPointForAssistant3")
-    private Long bonusPointForAssistant3;
+    protected Long bonusPointForAssistant3;
     @JsonProperty("BlockOfTimeToUseService")
-    private Long blockOfTimeToUseService;
+    protected Long blockOfTimeToUseService;
     @JsonProperty("IsPriceForBlock")
-    private Boolean isPriceForBlock;
+    protected Boolean isPriceForBlock;
     @JsonProperty("Position")
-    private Long Position;
+    protected Long Position;
     @JsonProperty("LargeUnitCode")
-    private String largeUnitCode;
+    protected String largeUnitCode;
     @JsonProperty("BarCodes")
     @Transient
-    private List<Object> barCodes;
+    protected List<Object> barCodes;
 //    @JsonProperty("Category")
 //    @Transient
-//    private Category category;
+//    protected Category category;
     @JsonProperty("CompositeItems")
     @Transient
-    private List<Object> compositeItems;
+    protected List<Object> compositeItems;
     @JsonProperty("CompositeItems1")
     @Transient
-    private List<Object> compositeItems1;
+    protected List<Object> compositeItems1;
     @JsonProperty("DeliveryOrderDetails")
     @Transient
-    private List<Object> deliveryOrderDetails;
+    protected List<Object> deliveryOrderDetails;
     @JsonProperty("InventoryCountDetails")
     @Transient
-    private List<Object> inventoryCountDetails;
+    protected List<Object> inventoryCountDetails;
     @JsonProperty("ManufacturingDetails")
     @Transient
-    private List<Object> manufacturingDetails;
+    protected List<Object> manufacturingDetails;
     @JsonProperty("ManufacturingMaterials")
     @Transient
-    private List<Object> manufacturingMaterials;
+    protected List<Object> manufacturingMaterials;
     @JsonProperty("NotebookDetails")
     @Transient
-    private List<Object> notebookDetails;
+    protected List<Object> notebookDetails;
     @JsonProperty("OrderDetails")
     @Transient
-    private List<Object> orderDetails;
+    protected List<Object> orderDetails;
     @JsonProperty("OtherTransactionDetails")
     @Transient
-    private List<Object> otherTransactionDetails;
+    protected List<Object> otherTransactionDetails;
     @JsonProperty("PriceBookDetails")
     @Transient
-    private List<Object> priceBookDetails;
+    protected List<Object> priceBookDetails;
     @JsonProperty("ProductAttributes")
     @Transient
-    private List<Object> productAttributes;
+    protected List<Object> productAttributes;
     @JsonProperty("ProductBranches")
     @Transient
-    private List<Object> productBranches;
+    protected List<Object> productBranches;
     @JsonProperty("ProductExtras")
     @Transient
-    private List<Object> productExtras;
+    protected List<Object> productExtras;
     @JsonProperty("ProductImages")
     @Transient
-    private List<Object> productImages;
+    protected List<Object> productImages;
     @JsonProperty("ProductPartners")
     @Transient
-    private List<Object> productPartners;
+    protected List<Object> productPartners;
     @JsonProperty("ProductSerials")
     @Transient
-    private List<Object> productSerials;
+    protected List<Object> productSerials;
     @JsonProperty("PurchaseOrderReturnDetails")
     @Transient
-    private List<Object> purchaseOrderReturnDetails;
+    protected List<Object> purchaseOrderReturnDetails;
     @JsonProperty("ReturnDetails")
     @Transient
-    private List<Object> returnDetails;
+    protected List<Object> returnDetails;
     @JsonProperty("Rooms")
     @Transient
-    private List<Object> rooms;
+    protected List<Object> rooms;
     @JsonProperty("RoomHistories")
     @Transient
-    private List<Object> roomHistories;
+    protected List<Object> roomHistories;
     @JsonProperty("TransferDetails")
     @Transient
-    private List<Object> transferDetails;
+    protected List<Object> transferDetails;
 
 }
