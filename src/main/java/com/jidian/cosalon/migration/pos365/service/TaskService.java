@@ -145,44 +145,44 @@ public class TaskService {
                 Utils.SESSION_ID, Utils.PID);
         }
 
-//        taskExecutor.execute(userThread);
-//        taskExecutor.execute(categoryThread);
-//        taskExecutor.execute(itemsThread);
-//        taskExecutor.execute(partnerThread);
-//        taskExecutor.execute(productOnHandByBranchThread);
-//
-//        taskExecutor.execute(() -> {
-//            try {
-//                final Future futureBranch = taskExecutor.submit(branchThread);
-//                final Future futureProduct = taskExecutor.submit(productThread);
-//                futureBranch.get();
-//                futureProduct.get();
-//
-//                taskExecutor.execute(productHistoryThread);
-//            } catch (Exception e) {
-//                LOGGER.error(e.getMessage(), e);
-//            }
-//        });
-//        taskExecutor.execute(() -> {
-//            try {
-//                LOGGER.info("Executing Order Stock Thread");
-//                final Future futureOrderStock = taskExecutor.submit(orderStockThread);
-//                futureOrderStock.get();
-//                taskExecutor.execute(orderStockDetailThread);
-//            } catch (Exception e) {
-//                LOGGER.error(e.getMessage(), e);
-//            }
-//        });
-//        taskExecutor.execute(() -> {
-//            try {
-//                LOGGER.info("Executing Return Thread");
-//                final Future futureReturn = taskExecutor.submit(returnThread);
-//                futureReturn.get();
-//                taskExecutor.execute(returnDetailThread);
-//            } catch (Exception e) {
-//                LOGGER.error(e.getMessage(), e);
-//            }
-//        });
+        taskExecutor.execute(userThread);
+        taskExecutor.execute(categoryThread);
+        taskExecutor.execute(itemsThread);
+        taskExecutor.execute(partnerThread);
+        taskExecutor.execute(productOnHandByBranchThread);
+
+        taskExecutor.execute(() -> {
+            try {
+                final Future futureBranch = taskExecutor.submit(branchThread);
+                final Future futureProduct = taskExecutor.submit(productThread);
+                futureBranch.get();
+                futureProduct.get();
+
+                taskExecutor.execute(productHistoryThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
+        taskExecutor.execute(() -> {
+            try {
+                LOGGER.info("Executing Order Stock Thread");
+                final Future futureOrderStock = taskExecutor.submit(orderStockThread);
+                futureOrderStock.get();
+                taskExecutor.execute(orderStockDetailThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
+        taskExecutor.execute(() -> {
+            try {
+                LOGGER.info("Executing Return Thread");
+                final Future futureReturn = taskExecutor.submit(returnThread);
+                futureReturn.get();
+                taskExecutor.execute(returnDetailThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
         taskExecutor.execute(() -> {
             try {
                 LOGGER.info("Executing Order Thread");
@@ -193,18 +193,18 @@ public class TaskService {
                 LOGGER.error(e.getMessage(), e);
             }
         });
-//
-//        taskExecutor.execute(() -> {
-//            try {
-//                LOGGER.info("Executing Transfer Thread");
-//                final Future futureTransfer = taskExecutor.submit(transferThread);
-//                futureTransfer.get();
-//                LOGGER.info("Executing Transfer Detail Thread");
-//                taskExecutor.execute(transfersDetailThread);
-//            } catch (Exception e) {
-//                LOGGER.error(e.getMessage(), e);
-//            }
-//        });
+
+        taskExecutor.execute(() -> {
+            try {
+                LOGGER.info("Executing Transfer Thread");
+                final Future futureTransfer = taskExecutor.submit(transferThread);
+                futureTransfer.get();
+                LOGGER.info("Executing Transfer Detail Thread");
+                taskExecutor.execute(transfersDetailThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
 
         return true;
     }
@@ -214,8 +214,8 @@ public class TaskService {
     }
 
     public Boolean createMigrationTask() throws Exception {
-//        taskExecutor.execute(imsWarehouseThread);
-//        taskExecutor.execute(imsChemicalThread);
+        taskExecutor.execute(imsWarehouseThread);
+        taskExecutor.execute(imsChemicalThread);
         taskExecutor.execute(imsSupplierThread);
         return true;
     }
