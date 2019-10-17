@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -61,14 +60,11 @@ public class ImsWarehouseThread extends MyThread {
                             },
                             keyHolder);
                     if (keyHolder.getKey() != null) {
-                        try {
-                            jdbcTemplate.update("INSERT INTO p365_branchs_ims_warehouse (p365_branchs_id, ims_warehouse_id) " +
-                                    "VALUES (?,?) ON DUPLICATE KEY UPDATE ims_warehouse_id = ?",
-                                    branchWarehouseQueryDto.getId(),
-                                    keyHolder.getKey().longValue(),
-                                    keyHolder.getKey().longValue());
-                        } catch (DataAccessException e) {
-                        }
+                        jdbcTemplate.update("INSERT INTO p365_branchs_ims_warehouse (p365_branchs_id, ims_warehouse_id) " +
+                                "VALUES (?,?) ON DUPLICATE KEY UPDATE ims_warehouse_id = ?",
+                                branchWarehouseQueryDto.getId(),
+                                keyHolder.getKey().longValue(),
+                                keyHolder.getKey().longValue());
                     }
                 } else {
                     jdbcTemplate.update("UPDATE ims_warehouse SET gmt_modified = CURRENT_TIMESTAMP(), version = version + 1, name = ?, address = ?, status = ? WHERE id = ?",
