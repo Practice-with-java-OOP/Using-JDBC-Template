@@ -124,7 +124,7 @@ public class ImsChemicalThread extends MyThread {
                                 jdbcTemplate.update("INSERT INTO ims_chemical_sub_unit (gmt_create, gmt_modified, version, type, name, price, chemical_id, standard_unit_exchange) " +
                                                 "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,3,?,?,?,?)",
                                         dto.getUnit(),
-                                        dto.getPrice(),
+                                        null,
                                         chemicalId,
                                         new BigDecimal(dto.getConversionValue()));
                             } catch (DataAccessException e) {
@@ -134,7 +134,7 @@ public class ImsChemicalThread extends MyThread {
                                 jdbcTemplate.update("UPDATE ims_chemical_sub_unit SET  gmt_modified = CURRENT_TIMESTAMP(), version = version+1, " +
                                                 "name = ?, price = ?, chemical_id = ?, standard_unit_exchange = ? WHERE id = ?",
                                         dto.getUnit(),
-                                        dto.getPrice(),
+                                        null,
                                         chemicalId,
                                         new BigDecimal(dto.getConversionValue()),
                                         subUnits.get(i).getId());
