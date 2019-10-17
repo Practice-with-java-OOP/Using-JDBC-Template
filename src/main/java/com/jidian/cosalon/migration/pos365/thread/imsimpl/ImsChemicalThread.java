@@ -41,7 +41,7 @@ public class ImsChemicalThread extends MyThread {
                             "where a.product_type = 1", (rs, rowNum) -> {
                     final ProductChemicalQueryDto result = new ProductChemicalQueryDto();
                     result.setId(rs.getLong("id"));
-                    result.setCode(rs.getString("id"));
+                    result.setCode(rs.getString("code"));
                     result.setName(rs.getString("name"));
                     result.setConversionValue(rs.getLong("conversion_value"));
                     result.setCategoryId(rs.getLong("category_id"));
