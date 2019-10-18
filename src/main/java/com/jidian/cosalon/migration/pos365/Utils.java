@@ -23,4 +23,13 @@ public class Utils {
     public static Integer nvl(Integer src) {
         return src == null ? 0: src;
     }
+
+    public static String normalize(String src) {
+        if (src == null) return "";
+        return src.replaceAll(" ", "").trim();
+    }
+
+    public static boolean isBlank(String src) {
+        return src == null || src.trim().isEmpty();
+    }
 }
