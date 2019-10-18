@@ -120,6 +120,10 @@ public class TaskService {
     @Qualifier("imsSupplierThread")
     private MyThread imsSupplierThread;
 
+    @Autowired
+    @Qualifier("imsWarehouseChemicalThread")
+    private MyThread imsWarehouseChemicalThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -214,8 +218,20 @@ public class TaskService {
     }
 
     public Boolean createMigrationTask() throws Exception {
-        taskExecutor.execute(imsWarehouseThread);
-        taskExecutor.execute(imsChemicalThread);
+        taskExecutor.execute(() -> {
+            try {
+                LOGGER.debug("Executing Product Migration");
+                final Future futureWarehouse = taskExecutor.submit(imsWarehouseThread);
+                final Future futureChemical = taskExecutor.submit(imsChemicalThread);
+
+                futureWarehouse.get();
+                futureChemical.get();
+
+                taskExecutor.execute(imsWarehouseChemicalThread);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
         taskExecutor.execute(imsSupplierThread);
         return true;
     }

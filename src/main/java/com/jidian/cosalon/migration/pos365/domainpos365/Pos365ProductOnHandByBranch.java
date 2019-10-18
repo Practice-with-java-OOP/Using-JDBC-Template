@@ -22,32 +22,32 @@ import java.math.BigDecimal;
 public class Pos365ProductOnHandByBranch {
     @JsonProperty("ProductId")
     @Id
-    private Long productId;
+    protected Long productId;
     @JsonProperty("BranchId")
     @Id
-    private Long branchId;
+    protected Long branchId;
     @JsonProperty("RetailerId")
-    private Long retailerId;
+    protected Long retailerId;
     @JsonProperty("OnHand")
-    private Long onHand;
+    protected Long onHand;
     @JsonProperty("OnOrder")
-    private Long onOrder;
+    protected Long onOrder;
     @JsonProperty("MinQuantity")
-    private Long minQuantity;
+    protected Long minQuantity;
     @JsonProperty("MaxQuantity")
-    private Long maxQuantity;
+    protected Long maxQuantity;
     @JsonProperty("Cost")
-    private BigDecimal cost;
+    protected BigDecimal cost;
     @JsonProperty("PriceByBranch")
-    private BigDecimal priceByBranch;
+    protected BigDecimal priceByBranch;
     @JsonProperty("CreatedDate")
-    private String createdDate;
+    protected String createdDate;
     @JsonProperty("CreatedBy")
-    private Long createdBy;
+    protected Long createdBy;
     @JsonProperty("ModifiedDate")
-    private String modifiedDate;
+    protected String modifiedDate;
     @JsonProperty("ModifiedBy")
-    private Long modifiedBy;
+    protected Long modifiedBy;
     @JsonProperty("PriceByBranchLargeUnit")
-    private BigDecimal priceByBranchLargeUnit;
+    protected BigDecimal priceByBranchLargeUnit;
 }
