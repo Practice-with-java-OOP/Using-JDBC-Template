@@ -125,6 +125,10 @@ public class TaskService {
     private MyThread imsWarehouseChemicalThread;
 
     @Autowired
+    @Qualifier("imsWarehouseChemicalV2Thread")
+    private MyThread imsWarehouseChemicalV2Thread;
+
+    @Autowired
     @Qualifier("imsCustomerSuggestionThread")
     private MyThread imsCustomerSuggestionThread;
 
@@ -231,7 +235,8 @@ public class TaskService {
                 futureWarehouse.get();
                 futureChemical.get();
 
-                taskExecutor.execute(imsWarehouseChemicalThread);
+//                taskExecutor.execute(imsWarehouseChemicalThread); // haimt: not used
+                taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

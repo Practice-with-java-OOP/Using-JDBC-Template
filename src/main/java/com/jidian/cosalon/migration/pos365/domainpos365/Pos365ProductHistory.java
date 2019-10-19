@@ -21,27 +21,27 @@ import java.math.BigDecimal;
 public class Pos365ProductHistory {
     @JsonProperty("Id")
     @Id
-    private Long id;
+    protected Long id;
     @JsonProperty("ProductId")
-    private Long productId;
+    protected Long productId;
     @JsonProperty("Quantity")
-    private Long quantity;
+    protected Long quantity;
     @JsonProperty("EndingStocks")
-    private Long endingStocks;
+    protected Long endingStocks;
     @JsonProperty("DocumentCode")
-    private String documentCode;
+    protected String documentCode;
     @JsonProperty("DocumentType")
-    private Long documentType;
+    protected Long documentType;
     @JsonProperty("BranchId")
-    private Long branchId;
+    protected Long branchId;
     @JsonProperty("RetailerId")
-    private Long retailerId;
+    protected Long retailerId;
     @JsonProperty("Price")
-    private BigDecimal price;
+    protected BigDecimal price;
     @JsonProperty("Cost")
-    private BigDecimal cost;
+    protected BigDecimal cost;
     @JsonProperty("TransDate")
-    private String transDate;
+    protected String transDate;
     @JsonProperty("DocumentId")
-    private Long documentId;
+    protected Long documentId;
 }
