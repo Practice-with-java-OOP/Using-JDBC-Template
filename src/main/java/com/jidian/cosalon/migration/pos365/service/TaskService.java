@@ -235,7 +235,6 @@ public class TaskService {
                 futureWarehouse.get();
                 futureChemical.get();
 
-//                taskExecutor.execute(imsWarehouseChemicalThread); // haimt: not used
                 taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
