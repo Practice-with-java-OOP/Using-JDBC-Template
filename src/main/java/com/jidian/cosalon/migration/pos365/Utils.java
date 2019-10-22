@@ -23,7 +23,7 @@ public class Utils {
         return src == null ? "": src;
     }
 
-    public static Long nvl(Long src) {
+    public static long nvl(Long src) {
         return src == null ? 0L: src;
     }
 
@@ -31,7 +31,7 @@ public class Utils {
         return src == null ? BigDecimal.ZERO: src;
     }
 
-    public static Integer nvl(Integer src) {
+    public static int nvl(Integer src) {
         return src == null ? 0: src;
     }
 
