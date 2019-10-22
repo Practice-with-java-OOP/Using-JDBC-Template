@@ -233,21 +233,21 @@ public class TaskService {
         taskExecutor.execute(() -> {
             try {
                 LOGGER.debug("Executing Product Migration");
-//                final Future futureWarehouse = taskExecutor.submit(imsWarehouseThread);
-//                final Future futureChemical = taskExecutor.submit(imsChemicalThread);
-//                final Future futureSupplier = taskExecutor.submit(imsSupplierThread);
-//
-//                futureWarehouse.get();
-//                futureChemical.get();
-//                futureSupplier.get();
+                final Future futureWarehouse = taskExecutor.submit(imsWarehouseThread);
+                final Future futureChemical = taskExecutor.submit(imsChemicalThread);
+                final Future futureSupplier = taskExecutor.submit(imsSupplierThread);
 
-//                taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
+                futureWarehouse.get();
+                futureChemical.get();
+                futureSupplier.get();
+
+                taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
                 taskExecutor.execute(imsImportGoodsReceiptThread);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         });
-//        taskExecutor.execute(imsCustomerSuggestionThread);
+        taskExecutor.execute(imsCustomerSuggestionThread);
         return true;
     }
 }
