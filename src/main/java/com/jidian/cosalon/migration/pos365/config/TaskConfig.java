@@ -15,8 +15,8 @@ public class TaskConfig {
     @Primary
     public ThreadPoolTaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(4);
+        executor.setCorePoolSize(40);
+        executor.setMaxPoolSize(40);
         executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("HaiMT_Thread");
         executor.initialize();
