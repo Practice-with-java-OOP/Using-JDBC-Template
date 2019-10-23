@@ -144,6 +144,9 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                         keyHolder);
                 List<ImportGoodsReceiptChemicalQueryDto> subDetails = detailMap.get(item.getId());
                 if (keyHolder.getKey() != null && subDetails != null) {
+                    if (!subDetails.isEmpty()) {
+                        jdbcTemplate.update("delete from ims_goods_receipt_chemical where goods_receipt_id = ?", keyHolder.getKey().longValue());
+                    }
                     subDetails.forEach(subDetail -> {
                         jdbcTemplate.update(
                                 "INSERT INTO ims_goods_receipt_chemical (gmt_create, gmt_modified, version, goods_receipt_id, " +
