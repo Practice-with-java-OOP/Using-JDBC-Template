@@ -7,8 +7,8 @@ import com.jidian.cosalon.migration.pos365.domainpos365.Pos365TransfersDetail;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -127,19 +127,16 @@ public class ImsTransferGoodsReceiptThread extends MyThread {
                         ps.setLong(index++, transaction.getDestWarehouseId());
                         ps.setInt(index++,
                             Utils.StatusEnum.resolve(Utils.nvl(transaction.getStatus())) == null
-                                ? 10
-                                : Objects.requireNonNull(
-                                    StatusEnum.resolve(Utils.nvl(transaction.getStatus())))
-                                    .getValue());
+                                ? 10 : Objects.requireNonNull(
+                                StatusEnum.resolve(Utils.nvl(transaction.getStatus()))).getValue());
                         ps.setString(index++, transaction.getCode());
                         ps.setTimestamp(index++, convertTimestamp(transaction.getDocumentDate()));
                         ps.setLong(index++, transaction.getSourceWarehouseId());
                         ps.setLong(index++, transaction.getDestWarehouseId());
                         ps.setInt(index++,
                             Utils.StatusEnum.resolve(Utils.nvl(transaction.getStatus())) == null
-                                ? 10
-                                : Utils.StatusEnum.resolve(Utils.nvl(transaction.getStatus()))
-                                    .getValue());
+                                ? 10 : Objects.requireNonNull(
+                                StatusEnum.resolve(Utils.nvl(transaction.getStatus()))).getValue());
                         return ps;
                     },
                     keyHolder);
@@ -180,12 +177,17 @@ public class ImsTransferGoodsReceiptThread extends MyThread {
 
     private Timestamp convertTimestamp(String stringDate) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date parsedDate = dateFormat.parse(stringDate);
-            timestamp = new Timestamp(parsedDate.getTime());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        if (stringDate != null) {
+            try {
+                ZonedDateTime zonedDateTime2 = ZonedDateTime
+                    .parse(stringDate, DateTimeFormatter.ISO_DATE_TIME);
+                timestamp = Timestamp.valueOf(zonedDateTime2.toLocalDateTime());
+                return timestamp;
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        } else {
+            timestamp = null;
         }
         return timestamp;
     }

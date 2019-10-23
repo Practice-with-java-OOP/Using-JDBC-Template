@@ -3,7 +3,6 @@ package com.jidian.cosalon.migration.pos365.service;
 import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
-//import com.jidian.cosalon.migration.pos365.repository.BranchJpaRepository;
 import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
