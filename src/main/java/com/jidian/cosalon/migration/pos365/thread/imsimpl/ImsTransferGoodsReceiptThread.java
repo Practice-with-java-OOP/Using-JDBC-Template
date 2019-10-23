@@ -157,12 +157,12 @@ public class ImsTransferGoodsReceiptThread extends MyThread {
                                 + " standard_unit_exchange = null, quantity  = ?, total_price = 0",
                             keyHolder.getKey().longValue(),
                             detail.getImsChemicalId(),
-                            detail.getChemicalName(),
+                            detail.getStandardUnit(),
                             detail.getPrice(),
                             detail.getQuantity(),
                             keyHolder.getKey().longValue(),
                             detail.getImsChemicalId(),
-                            detail.getChemicalName(),
+                            detail.getStandardUnit(),
                             detail.getPrice(),
                             detail.getQuantity()));
                 }
