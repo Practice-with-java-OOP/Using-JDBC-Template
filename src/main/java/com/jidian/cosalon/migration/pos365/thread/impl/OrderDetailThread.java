@@ -1,8 +1,6 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Items;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderDetail;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ReturnDetail;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import org.slf4j.Logger;
@@ -55,33 +53,6 @@ public class OrderDetailThread extends MyThread {
                                 count = response.getResults().size();
 
                                 orderDetails.addAll(response.getResults());
-//                                jdbcTemplate.batchUpdate("INSERT INTO p365_order_detail " +
-//                                        "    (id, order_id, product_id, quantity, price, base_price, is_large_unit, conversion_value, coefficient, processed, sold_by_id, assistant_by_id) " +
-//                                        "    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", new BatchPreparedStatementSetter() {
-//                                    @Override
-//                                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-//                                        Pos365OrderDetail categories = orderDetails.get(i);
-//                                        ps.setLong(1, categories.getId());
-//                                        ps.setLong(2, categories.getOrderId() == null ? 0 : categories.getOrderId());
-//                                        ps.setLong(3, categories.getProductId() == null ? 0 : categories.getProductId());
-//                                        ps.setInt(4, categories.getQuantity());
-//                                        ps.setBigDecimal(5, categories.getPrice() == null ? BigDecimal.ZERO : categories.getPrice());
-//                                        ps.setBigDecimal(6, categories.getBasePrice() == null ? BigDecimal.ZERO : categories.getBasePrice());
-//                                        ps.setBoolean(7, categories.getIsLargeUnit());
-//                                        ps.setInt(8, categories.getConversionValue());
-//                                        ps.setInt(9, categories.getCoefficient());
-//                                        ps.setInt(10, categories.getProcessed());
-//                                        ps.setLong(11, categories.getSoldById() == null ? 0 : categories.getSoldById());
-//                                        ps.setLong(12, categories.getAssistantById() == null ? 0 : categories.getAssistantById());
-//                                    }
-//
-//                                    @Override
-//                                    public int getBatchSize() {
-//                                        return orderDetails.size();
-//                                    }
-//                                });
-
-
 //                                response.getResults().forEach(item -> {
 //                                    jdbcTemplate.update(
 //                                            "INSERT INTO p365_order_detail " +
@@ -91,7 +62,7 @@ public class OrderDetailThread extends MyThread {
 //                                            item.getIsLargeUnit(), item.getConversionValue(), item.getCoefficient(), item.getProcessed(), item.getSoldById(), item.getAssistantById());
 //                                });
 //                                jdbcTemplate.execute("COMMIT");
-//                                insertedTotal += response.getResults().size();
+                                insertedTotal += response.getResults().size();
                             }
                         } while (count > 0);
                     } catch (IOException e) {

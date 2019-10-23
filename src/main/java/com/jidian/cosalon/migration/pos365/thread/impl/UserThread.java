@@ -1,6 +1,5 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -34,7 +33,7 @@ public class UserThread extends MyThread {
             jdbcTemplate.execute("TRUNCATE TABLE p365_users");
             do {
                 BaseResponse<Pos365User> response = pos365RetrofitService
-                    .listUsers(getMapHeaders2(), top, skip).execute().body();
+                        .listUsers(getMapHeaders2(), top, skip).execute().body();
                 if (response != null) {
                     skip += top;
                     assumptionTotal = response.getCount();
@@ -89,7 +88,7 @@ public class UserThread extends MyThread {
             LOGGER.error(e.getMessage(), e);
         } finally {
             LOGGER.info("SUMMARY: insertedTotal: {}, assumptionTotal: {}", insertedTotal,
-                assumptionTotal);
+                    assumptionTotal);
         }
     }
 }

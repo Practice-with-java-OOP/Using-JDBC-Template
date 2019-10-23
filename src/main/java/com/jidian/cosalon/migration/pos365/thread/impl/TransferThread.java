@@ -1,6 +1,5 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -34,7 +33,7 @@ public class TransferThread extends MyThread {
             jdbcTemplate.execute("TRUNCATE TABLE p365_transfers");
             do {
                 BaseResponse<Pos365Transfer> response = pos365RetrofitService
-                    .listTransfers(getMapHeaders2(), top, skip).execute().body();
+                        .listTransfers(getMapHeaders2(), top, skip).execute().body();
                 if (response != null) {
                     skip += top;
                     assumptionTotal = response.getCount();
@@ -92,7 +91,7 @@ public class TransferThread extends MyThread {
             LOGGER.error(e.getMessage(), e);
         } finally {
             LOGGER.info("SUMMARY: insertedTotal: {}, assumptionTotal: {}", insertedTotal,
-                assumptionTotal);
+                    assumptionTotal);
         }
     }
 }

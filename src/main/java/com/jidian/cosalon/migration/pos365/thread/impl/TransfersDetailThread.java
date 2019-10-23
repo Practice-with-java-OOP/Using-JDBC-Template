@@ -1,18 +1,18 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365TransfersDetail;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.stereotype.Component;
 
 @Component("transfersDetailThread")
 public class TransfersDetailThread extends MyThread {
@@ -32,13 +32,13 @@ public class TransfersDetailThread extends MyThread {
         try {
             jdbcTemplate.execute("TRUNCATE TABLE p365_transfers_detail");
             List<Long> transferIds = jdbcTemplate
-                .queryForList("SELECT DISTINCT id FROM p365_transfers", Long.class);
+                    .queryForList("SELECT DISTINCT id FROM p365_transfers", Long.class);
             if (!transferIds.isEmpty()) {
                 transferIds.forEach(transferId -> {
                     try {
                         do {
                             BaseResponse<Pos365TransfersDetail> response = pos365RetrofitService
-                                .listTransferDetails(getMapHeaders2(), transferId).execute().body();
+                                    .listTransferDetails(getMapHeaders2(), transferId).execute().body();
                             if (response != null) {
                                 assumptionTotal += response.getCount();
                             }
@@ -91,7 +91,7 @@ public class TransfersDetailThread extends MyThread {
             LOGGER.error(e.getMessage(), e);
         } finally {
             LOGGER.info("SUMMARY: insertedTotal: {}, assumptionTotal: {}", insertedTotal,
-                assumptionTotal);
+                    assumptionTotal);
         }
     }
 }

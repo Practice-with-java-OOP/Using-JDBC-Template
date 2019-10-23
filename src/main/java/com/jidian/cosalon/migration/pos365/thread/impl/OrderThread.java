@@ -33,7 +33,7 @@ public class OrderThread extends MyThread {
             jdbcTemplate.execute("TRUNCATE TABLE p365_orders");
             do {
                 BaseResponse<Pos365Order> response = pos365RetrofitService
-                    .listOrders(getMapHeaders2(), top, skip).execute().body();
+                        .listOrders(getMapHeaders2(), top, skip).execute().body();
                 if (response != null) {
                     skip += top;
                     assumptionTotal = response.getCount();
@@ -41,7 +41,7 @@ public class OrderThread extends MyThread {
                 count = 0;
                 if (response != null && response.getResults() != null) {
                     count = response.getResults().size();
-                    List<Pos365Order> pos365OrderList =  response.getResults();
+                    List<Pos365Order> pos365OrderList = response.getResults();
 
                     jdbcTemplate.batchUpdate("INSERT "
                             + " INTO "
@@ -68,7 +68,7 @@ public class OrderThread extends MyThread {
                             ps.setString(12, pos365OrderList.get(i).getMoreAttributes());
                             ps.setLong(13, pos365OrderList.get(i).getNumberOfGuests());
                             ps.setLong(14, pos365OrderList.get(i).getPartnerId() == null ? 0 : pos365OrderList.get(i).getPartnerId());
-                            ps.setLong(15, pos365OrderList.get(i).getPriceBookId() == null ? 0: pos365OrderList.get(i).getPriceBookId());
+                            ps.setLong(15, pos365OrderList.get(i).getPriceBookId() == null ? 0 : pos365OrderList.get(i).getPriceBookId());
                             ps.setString(16, pos365OrderList.get(i).getPurchaseDate());
                             ps.setLong(17, pos365OrderList.get(i).getRetailerId());
                             ps.setBigDecimal(18, pos365OrderList.get(i).getShippingCost());
@@ -111,7 +111,7 @@ public class OrderThread extends MyThread {
             LOGGER.error(e.getMessage(), e);
         } finally {
             LOGGER.info("SUMMARY: insertedTotal: {}, assumptionTotal: {}", insertedTotal,
-                assumptionTotal);
+                    assumptionTotal);
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -58,7 +57,7 @@ public class OrderStockDetailThread extends MyThread {
                             if (response != null && response.getResults() != null) {
                                 count = response.getResults().size();
 
-                                List<Pos365OrderStockDetail> orderStockDetails =  response.getResults();
+                                List<Pos365OrderStockDetail> orderStockDetails = response.getResults();
                                 jdbcTemplate.batchUpdate("INSERT INTO p365_order_stock_detail " +
                                         "    (id, purchase_order_id, product_id, quantity, price, description, is_large_unit, selling_price, conversion_value, order_quantity) " +
                                         "    VALUES (?,?,?,?,?,?,?,?,?,?)", new BatchPreparedStatementSetter() {
@@ -92,7 +91,7 @@ public class OrderStockDetailThread extends MyThread {
 //                                            item.getIsLargeUnit(), item.getSellingPrice(), item.getConversionValue(), item.getOrderQuantity());
 //                                });
 //                                jdbcTemplate.execute("COMMIT");
-//                                insertedTotal += response.getResults().size();
+                                insertedTotal += response.getResults().size();
                             }
                         } while (count > 0);
                     } catch (IOException e) {

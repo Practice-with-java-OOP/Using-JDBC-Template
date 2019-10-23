@@ -1,6 +1,5 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Categories;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Items;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -44,7 +43,7 @@ public class ItemsThread extends MyThread {
                 if (response != null && response.getResults() != null) {
                     count = response.getResults().size();
                     //do id của dữ liệu hiện tại trả về đang = 0 hết nên đang để id tự động tăng.
-                    List<Pos365Items> pos365Items =  response.getResults();
+                    List<Pos365Items> pos365Items = response.getResults();
                     jdbcTemplate.batchUpdate("INSERT INTO p365_items " +
                             "    (product_id, name, attributes_name, code, cost, multi_unit, price, original_price, original_price_large_unit, price_large_unit) " +
                             "VALUES (?,?,?,?,?,?,?,?,?,?)", new BatchPreparedStatementSetter() {
@@ -60,7 +59,7 @@ public class ItemsThread extends MyThread {
                             ps.setBigDecimal(7, categories.getPrice() == null ? BigDecimal.ZERO : categories.getPrice());
                             ps.setBigDecimal(8, categories.getOriginalPrice() == null ? BigDecimal.ZERO : categories.getOriginalPrice());
                             ps.setBigDecimal(9, categories.getOriginalPriceLargeUnit() == null ? BigDecimal.ZERO : categories.getOriginalPriceLargeUnit());
-                            ps.setBigDecimal(10, categories.getPriceLargeUnit() == null ? BigDecimal.ZERO :  categories.getPriceLargeUnit());
+                            ps.setBigDecimal(10, categories.getPriceLargeUnit() == null ? BigDecimal.ZERO : categories.getPriceLargeUnit());
                         }
 
                         @Override
@@ -68,6 +67,7 @@ public class ItemsThread extends MyThread {
                             return pos365Items.size();
                         }
                     });
+                    insertedTotal += response.getResults().size();
 
 //                    response.getResults().forEach(item -> {
 //                        jdbcTemplate.update(

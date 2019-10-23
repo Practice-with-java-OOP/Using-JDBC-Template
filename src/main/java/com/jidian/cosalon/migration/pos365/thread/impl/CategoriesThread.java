@@ -1,6 +1,5 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Branch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Categories;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -32,7 +31,7 @@ public class CategoriesThread extends MyThread {
             LOGGER.info("Response: {}", response);
 
 //                    branchJpaRepository.saveAll(response.getResults());
-            List<Pos365Categories> pos365Categories =  response.getResults();
+            List<Pos365Categories> pos365Categories = response.getResults();
             jdbcTemplate.batchUpdate("INSERT  " +
                     "INTO " +
                     "    p365_categories " +
