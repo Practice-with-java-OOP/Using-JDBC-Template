@@ -6,6 +6,7 @@ import com.jidian.cosalon.migration.pos365.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class TaskController {
 
     @Autowired
+    @Qualifier("jdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
     @Autowired

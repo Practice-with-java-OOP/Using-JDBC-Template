@@ -3,7 +3,7 @@ package com.jidian.cosalon.migration.pos365.service;
 import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
-import com.jidian.cosalon.migration.pos365.repository.BranchJpaRepository;
+//import com.jidian.cosalon.migration.pos365.repository.BranchJpaRepository;
 import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -31,8 +31,8 @@ public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
 
-    @Autowired
-    private BranchJpaRepository branchJpaRepository;
+//    @Autowired
+//    private BranchJpaRepository branchJpaRepository;
 
     @Autowired
     private Retrofit retrofit;
@@ -131,6 +131,10 @@ public class TaskService {
     @Autowired
     @Qualifier("imsCustomerSuggestionThread")
     private MyThread imsCustomerSuggestionThread;
+
+    @Autowired
+    @Qualifier("imsImportGoodsReceiptThread")
+    private MyThread imsImportGoodsReceiptThread;
 
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
@@ -232,16 +236,18 @@ public class TaskService {
                 LOGGER.debug("Executing Product Migration");
                 final Future futureWarehouse = taskExecutor.submit(imsWarehouseThread);
                 final Future futureChemical = taskExecutor.submit(imsChemicalThread);
+                final Future futureSupplier = taskExecutor.submit(imsSupplierThread);
 
                 futureWarehouse.get();
                 futureChemical.get();
+                futureSupplier.get();
 
                 taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
+                taskExecutor.execute(imsImportGoodsReceiptThread);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         });
-        taskExecutor.execute(imsSupplierThread);
         taskExecutor.execute(imsCustomerSuggestionThread);
         return true;
     }

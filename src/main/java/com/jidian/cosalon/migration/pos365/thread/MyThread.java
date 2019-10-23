@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
@@ -33,6 +34,7 @@ public abstract class MyThread implements Runnable {
     protected TaskRepository taskRepository;
 
     @Autowired
+    @Qualifier("jdbcTemplate")
     protected JdbcTemplate jdbcTemplate;
 
     @Getter

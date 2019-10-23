@@ -101,6 +101,32 @@ public class ImsSupplierThread extends MyThread {
                         supplier.getGmtCreate(), new Timestamp(System.currentTimeMillis()), supplier.getId()
                 );
             });
+
+            // haimt add default supplier
+            final List<ImsSupplier> defaultSupps = jdbcTemplate.query("select * from ims_supplier a where a.code = 'DEFAULT'", (rs, rowNum) -> {
+                final ImsSupplier result = new ImsSupplier();
+                result.setId(rs.getLong("id"));
+                result.setGmtCreate(rs.getTimestamp("gmt_create"));
+                result.setGmtModified(rs.getTimestamp("gmt_modified"));
+                result.setVersion(rs.getInt("version"));
+                result.setCode(rs.getString("code"));
+                result.setName(rs.getString("name"));
+                result.setPhoneNum(rs.getString("phone_number_1"));
+                result.setPhoneNum2(rs.getString("phone_number_2"));
+                result.setAddress(rs.getString("address_1"));
+                result.setAddress2(rs.getString("address_2"));
+                result.setTransactionQuantity(rs.getInt("transaction_quantity"));
+                result.setTransactionAmount(rs.getBigDecimal("transaction_amount"));
+                result.setStatus(rs.getInt("status"));
+                result.setRemarks(rs.getString("remarks"));
+                return result;
+            });
+            if (defaultSupps.isEmpty()) {
+                jdbcTemplate.update(
+                        "INSERT INTO ims_supplier" +
+                                "(code, name, phone_number_1, address_1, transaction_quantity, transaction_amount, status, gmt_create, gmt_modified, version)" +
+                                "VALUES ('DEFAULT','DEFAULT','00000000000','',0,0,1,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0)");
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

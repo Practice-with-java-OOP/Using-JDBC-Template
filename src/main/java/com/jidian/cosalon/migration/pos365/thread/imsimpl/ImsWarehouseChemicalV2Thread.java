@@ -79,7 +79,6 @@ public class ImsWarehouseChemicalV2Thread extends MyThread {
 
             currChemicalId = 0L;
             currWarehouseId = 0L;
-            if (!items.isEmpty()) jdbcTemplate.execute("TRUNCATE TABLE ims_warehouse_chemical_history");
             items.forEach(item -> {
                 KeyHolder keyHolder = new GeneratedKeyHolder();
                 if (currChemicalId != item.getImsChemicalId() || currWarehouseId != item.getImsWarehouseId()) {
@@ -128,6 +127,9 @@ public class ImsWarehouseChemicalV2Thread extends MyThread {
                     currWarehouseId = item.getImsWarehouseId();
                     currWarehouseChemicalId = keyHolder.getKey() == null ? 0L: keyHolder.getKey().longValue();
                 } else {
+                    if (currWarehouseChemicalId > 0) {
+                        jdbcTemplate.update("delete from ims_warehouse_chemical_history where warehouse_chemical_id = ?", currWarehouseChemicalId);
+                    }
                     insertedTotal += jdbcTemplate.update(
                             connection -> {
                                 PreparedStatement ps = connection.prepareStatement(
