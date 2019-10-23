@@ -33,7 +33,7 @@ public class BranchThread extends MyThread {
             LOGGER.info("Response: {}", response);
 
 //                    branchJpaRepository.saveAll(response.getResults());
-            List<Pos365Branch> pos365Branches =  response.getResults();
+            List<Pos365Branch> pos365Branches = response.getResults();
             jdbcTemplate.batchUpdate("INSERT  " +
                     "INTO " +
                     "    p365_branchs " +
@@ -44,13 +44,13 @@ public class BranchThread extends MyThread {
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     ps.setLong(1, pos365Branches.get(i).getId());
                     ps.setString(2, pos365Branches.get(i).getAddress());
-                    ps.setLong(3, pos365Branches.get(i).getCreatedBy());
+                    ps.setLong(3, pos365Branches.get(i).getCreatedBy() == null ? 0 : pos365Branches.get(i).getCreatedBy());
                     ps.setString(4, pos365Branches.get(i).getCreatedDate());
-                    ps.setLong(5, pos365Branches.get(i).getModifiedBy());
+                    ps.setLong(5, pos365Branches.get(i).getModifiedBy() == null ? 0 : pos365Branches.get(i).getModifiedBy());
                     ps.setString(6, pos365Branches.get(i).getModifiedDate());
                     ps.setString(7, pos365Branches.get(i).getName());
                     ps.setBoolean(8, pos365Branches.get(i).getOnline());
-                    ps.setLong(9, pos365Branches.get(i).getRetailerId());
+                    ps.setLong(9, pos365Branches.get(i).getRetailerId() == null ? 0 : pos365Branches.get(i).getRetailerId());
                 }
 
                 @Override

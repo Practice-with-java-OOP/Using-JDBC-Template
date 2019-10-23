@@ -1,11 +1,17 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.stereotype.Component;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
 @Component("userThread")
 public class UserThread extends MyThread {
@@ -36,17 +42,46 @@ public class UserThread extends MyThread {
                 count = 0;
                 if (response != null && response.getResults() != null) {
                     count = response.getResults().size();
-                    response.getResults().forEach(item -> jdbcTemplate.update("INSERT  " +
+
+                    List<Pos365User> users = response.getResults();
+                    jdbcTemplate.batchUpdate("INSERT  " +
                             "INTO " +
                             "    p365_users " +
                             "    (id, username, name, created_date, is_active, is_admin, retailer_id, created_by, admin_group)  "
                             +
                             "  VALUES " +
-                            "    (?,?,?,?,?,?,?,?,?)",
-                        item.getId(), item.getUsername(), item.getName(),
-                        item.getCreatedDate(), item.getIsActive(), item.getIsAdmin(),
-                        item.getRetailerId(), item.getCreatedBy(), item.getAdminGroup()));
-                    jdbcTemplate.execute("COMMIT");
+                            "    (?,?,?,?,?,?,?,?,?)", new BatchPreparedStatementSetter() {
+                        @Override
+                        public void setValues(PreparedStatement ps, int i) throws SQLException {
+                            Pos365User categories = users.get(i);
+                            ps.setLong(1, categories.getId());
+                            ps.setString(2, categories.getUsername());
+                            ps.setString(3, categories.getName());
+                            ps.setString(4, categories.getCreatedDate());
+                            ps.setBoolean(5, categories.getIsActive());
+                            ps.setBoolean(6, categories.getIsAdmin());
+                            ps.setLong(7, categories.getRetailerId() == null ? 0 : categories.getRetailerId());
+                            ps.setLong(8, categories.getCreatedBy() == null ? 0 : categories.getCreatedBy());
+                            ps.setLong(9, categories.getAdminGroup() == null ? 0 : categories.getAdminGroup());
+                        }
+
+                        @Override
+                        public int getBatchSize() {
+                            return users.size();
+                        }
+                    });
+
+//                    response.getResults().forEach(item -> jdbcTemplate.update("INSERT  " +
+//                            "INTO " +
+//                            "    p365_users " +
+//                            "    (id, username, name, created_date, is_active, is_admin, retailer_id, created_by, admin_group)  "
+//                            +
+//                            "  VALUES " +
+//                            "    (?,?,?,?,?,?,?,?,?)",
+//                        item.getId(), item.getUsername(), item.getName(),
+//                        item.getCreatedDate(), item.getIsActive(), item.getIsAdmin(),
+//                        item.getRetailerId(), item.getCreatedBy(), item.getAdminGroup()));
+//                    jdbcTemplate.execute("COMMIT");
                     insertedTotal += response.getResults().size();
                 }
             } while (count > 0);
