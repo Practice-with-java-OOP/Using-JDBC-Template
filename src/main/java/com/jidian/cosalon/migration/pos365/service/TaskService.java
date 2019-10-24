@@ -139,6 +139,10 @@ public class TaskService {
     @Qualifier("imsTransferGoodsReceiptThread")
     private MyThread imsTransferGoodsReceiptThread;
 
+    @Autowired
+    @Qualifier("imsReturnGoodsReceiptThread")
+    private MyThread imsReturnGoodsReceiptThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -247,6 +251,7 @@ public class TaskService {
                 taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
                 taskExecutor.execute(imsImportGoodsReceiptThread);
                 taskExecutor.execute(imsTransferGoodsReceiptThread);
+                taskExecutor.execute(imsReturnGoodsReceiptThread);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

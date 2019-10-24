@@ -1,6 +1,9 @@
 package com.jidian.cosalon.migration.pos365;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
@@ -45,7 +48,7 @@ public class Utils {
         return src == null || src.trim().isEmpty();
     }
 
-    public static enum StatusEnum {
+    public enum StatusEnum {
         EXECUTING(1, 10),
         FINISHED(2, 40),
         CANCELED(3, 30)
@@ -69,5 +72,19 @@ public class Utils {
             }
             return null;
         }
+    }
+
+    public static Timestamp convertTimestamp(String stringDate) {
+        if (stringDate != null) {
+            try {
+                ZonedDateTime zonedDateTime2 = ZonedDateTime
+                        .parse(stringDate, DateTimeFormatter.ISO_DATE_TIME);
+                return Timestamp.valueOf(zonedDateTime2.toLocalDateTime());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
     }
 }
