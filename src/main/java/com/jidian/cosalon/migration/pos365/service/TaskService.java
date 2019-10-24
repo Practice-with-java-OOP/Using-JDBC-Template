@@ -3,7 +3,6 @@ package com.jidian.cosalon.migration.pos365.service;
 import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
-//import com.jidian.cosalon.migration.pos365.repository.BranchJpaRepository;
 import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -136,6 +135,10 @@ public class TaskService {
     @Qualifier("imsImportGoodsReceiptThread")
     private MyThread imsImportGoodsReceiptThread;
 
+    @Autowired
+    @Qualifier("imsTransferGoodsReceiptThread")
+    private MyThread imsTransferGoodsReceiptThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -243,6 +246,7 @@ public class TaskService {
 
                 taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
                 taskExecutor.execute(imsImportGoodsReceiptThread);
+                taskExecutor.execute(imsTransferGoodsReceiptThread);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

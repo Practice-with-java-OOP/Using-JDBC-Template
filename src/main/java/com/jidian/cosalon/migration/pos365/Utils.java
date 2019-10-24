@@ -3,6 +3,7 @@ package com.jidian.cosalon.migration.pos365;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
 
 public class Utils {
     public static String SESSION_ID = "";
@@ -42,5 +43,31 @@ public class Utils {
 
     public static boolean isBlank(String src) {
         return src == null || src.trim().isEmpty();
+    }
+
+    public static enum StatusEnum {
+        EXECUTING(1, 10),
+        FINISHED(2, 40),
+        CANCELED(3, 30)
+        ;
+
+        @Getter
+        private final int value;
+        @Getter
+        private final int goodsReceiptStatus;
+
+        StatusEnum(int value, int grStatus) {
+            this.value = value;
+            this.goodsReceiptStatus = grStatus;
+        }
+
+        public static StatusEnum resolve(int value) {
+            for (StatusEnum mEnum : values()) {
+                if (mEnum.value == value) {
+                    return mEnum;
+                }
+            }
+            return null;
+        }
     }
 }
