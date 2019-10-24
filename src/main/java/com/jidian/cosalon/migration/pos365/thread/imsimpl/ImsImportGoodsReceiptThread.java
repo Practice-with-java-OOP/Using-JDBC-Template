@@ -1,6 +1,7 @@
 package com.jidian.cosalon.migration.pos365.thread.imsimpl;
 
 import com.jidian.cosalon.migration.pos365.Utils;
+import com.jidian.cosalon.migration.pos365.domain.GoodsReceipt;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStock;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -17,8 +18,12 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component("imsImportGoodsReceiptThread")
@@ -52,28 +57,28 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                             "left join p365_branchs_ims_warehouse d on a.branch_id = d.p365_branchs_id " +
                             "order by a.id asc ",
                     (rs, rowNum) -> {
-                    final ImportGoodsReceiptQueryDto result = new ImportGoodsReceiptQueryDto();
-                    result.setId(rs.getLong("id"));
-                    result.setBranchId(rs.getLong("branch_id"));
-                    result.setCode(rs.getString("code"));
-                    result.setCreatedDate(rs.getTimestamp("created_date"));
-                    result.setCreatedBy(rs.getLong("created_by"));
-                    result.setModifiedBy(rs.getLong("modified_by"));
-                    result.setModifiedDate(rs.getTimestamp("modified_date"));
-                    result.setDeliveryDate(rs.getTimestamp("delivery_date"));
-                    result.setDiscount(rs.getBigDecimal("discount"));
-                    result.setDocumentDate(rs.getTimestamp("document_date"));
-                    result.setExchangeRate(rs.getBigDecimal("exchange_rate"));
-                    result.setStatus(rs.getInt("status"));
-                    result.setTotal(rs.getBigDecimal("total"));
-                    result.setTotalPayment(rs.getBigDecimal("total_payment"));
-                    result.setVat(rs.getBigDecimal("vat"));
-                    result.setPartnerId(rs.getLong("partner_id"));
-                    result.setDiscount(rs.getBigDecimal("discount"));
-                    result.setImsSupplierId(rs.getLong("supplier_id") == 0L ? defaultSupplierId: rs.getLong("supplier_id"));
-                    result.setImsWarehouseId(rs.getLong("ims_warehouse_id"));
-                    return result;
-                }
+                        final ImportGoodsReceiptQueryDto result = new ImportGoodsReceiptQueryDto();
+                        result.setId(rs.getLong("id"));
+                        result.setBranchId(rs.getLong("branch_id"));
+                        result.setCode(rs.getString("code"));
+                        result.setCreatedDate(rs.getTimestamp("created_date"));
+                        result.setCreatedBy(rs.getLong("created_by"));
+                        result.setModifiedBy(rs.getLong("modified_by"));
+                        result.setModifiedDate(rs.getTimestamp("modified_date"));
+                        result.setDeliveryDate(rs.getTimestamp("delivery_date"));
+                        result.setDiscount(rs.getBigDecimal("discount"));
+                        result.setDocumentDate(rs.getTimestamp("document_date"));
+                        result.setExchangeRate(rs.getBigDecimal("exchange_rate"));
+                        result.setStatus(rs.getInt("status"));
+                        result.setTotal(rs.getBigDecimal("total"));
+                        result.setTotalPayment(rs.getBigDecimal("total_payment"));
+                        result.setVat(rs.getBigDecimal("vat"));
+                        result.setPartnerId(rs.getLong("partner_id"));
+                        result.setDiscount(rs.getBigDecimal("discount"));
+                        result.setImsSupplierId(rs.getLong("supplier_id") == 0L ? defaultSupplierId: rs.getLong("supplier_id"));
+                        result.setImsWarehouseId(rs.getLong("ims_warehouse_id"));
+                        return result;
+                    }
             );
             assumptionTotal = items.size();
 
@@ -104,6 +109,21 @@ public class ImsImportGoodsReceiptThread extends MyThread {
             );
             Map<Long, List<ImportGoodsReceiptChemicalQueryDto>> detailMap = details.stream().collect(Collectors.groupingBy(Pos365OrderStockDetail::getPurchaseOrderId));
 
+//            final List<GoodsReceipt> existing = jdbcTemplate.query(
+//                    "select * from ims_goods_receipt a where a.type = 1 ",
+//                    (rs, rowNum) -> {
+//                        final GoodsReceipt result = new GoodsReceipt();
+//                        result.setId(rs.getLong("id"));
+//                        result.setType(rs.getInt("type"));
+//                        result.setReceiptCode(rs.getString("receipt_code"));
+//                        return result;
+//                    }
+//            );
+//            Map<String, List<GoodsReceipt>> existingMap = existing.stream().collect(Collectors.groupingBy(GoodsReceipt::getReceiptCode));
+//            List<GoodsReceipt> inserts = new ArrayList<>();
+//            List<GoodsReceipt> updates = new ArrayList<>();
+
+
             items.forEach(item -> {
                 KeyHolder keyHolder = new GeneratedKeyHolder();
                 insertedTotal += jdbcTemplate.update(
@@ -131,7 +151,7 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()).intValue() == 0 ? BigDecimal.ZERO : item.getDiscount().divide(item.getTotal(), 2, RoundingMode.HALF_UP));
                             ps.setBigDecimal(i++, item.getTotal());
                             ps.setInt(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).value);
-                            ps.setString(i++, item.getCode());
+                            ps.setString(i++, Utils.nvl(item.getCode()).trim());
                             ps.setLong(i++, item.getImsSupplierId());
                             ps.setTimestamp(i++, item.getDeliveryDate());
                             ps.setLong(i++, item.getImsWarehouseId());
@@ -152,15 +172,7 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                                 "INSERT INTO ims_goods_receipt_chemical (gmt_create, gmt_modified, version, goods_receipt_id, " +
                                         "    chemical_id, unit_id, unit_type, unit_name, unit_price, standard_unit_exchange, quantity, total_price) " +
                                         "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?, " +
-                                        "    ?,null,9,?,?,null,?,?) " +
-                                        "ON DUPLICATE KEY UPDATE gmt_modified = CURRENT_TIMESTAMP(), version = version+1, goods_receipt_id = ?, " +
-                                        "    chemical_id = ?, unit_id = null, unit_type = 9, unit_name = ?, unit_price = ?, standard_unit_exchange = null, quantity = ?, total_price = ? ",
-                                keyHolder.getKey().longValue(),
-                                subDetail.getImsChemicalId(),
-                                subDetail.getStandardUnit(),
-                                subDetail.getPrice(),
-                                subDetail.getQuantity(),
-                                Utils.nvl(subDetail.getPrice()).multiply(new BigDecimal(Utils.nvl(subDetail.getQuantity()))),
+                                        "    ?,null,9,?,?,null,?,?) ",
                                 keyHolder.getKey().longValue(),
                                 subDetail.getImsChemicalId(),
                                 subDetail.getStandardUnit(),
@@ -170,6 +182,16 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                     });
 
                 }
+            });
+
+            // update gia tieu chuan cho chemical
+            Map<Long, Optional<ImportGoodsReceiptChemicalQueryDto>> prices = details.stream()
+                    .collect(Collectors.groupingBy(ImportGoodsReceiptChemicalQueryDto::getImsChemicalId, Collectors.maxBy(Comparator.comparing(Pos365OrderStockDetail::getId))));
+            prices.forEach((chemicalId, optDto) -> {
+                optDto.ifPresent(importGoodsReceiptChemicalQueryDto -> jdbcTemplate.update("UPDATE ims_chemical SET price_standard_unit = ? WHERE id = ?",
+                        importGoodsReceiptChemicalQueryDto.getIsLargeUnit() != null && importGoodsReceiptChemicalQueryDto.getIsLargeUnit() ? Utils.nvl(importGoodsReceiptChemicalQueryDto.getPrice())
+                                : (Utils.nvl(importGoodsReceiptChemicalQueryDto.getPrice()).multiply(new BigDecimal(importGoodsReceiptChemicalQueryDto.getConversionValue()))),
+                        chemicalId));
             });
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
