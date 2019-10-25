@@ -145,6 +145,10 @@ public class TaskService {
     private MyThread imsReturnGoodsReceiptThread;
 
     @Autowired
+    @Qualifier("imsRetailGoodsReceiptThread")
+    private MyThread imsRetailGoodsReceiptThread;
+
+    @Autowired
     @Qualifier("upmsUserThread")
     private MyThread upmsUserThread;
 
@@ -257,10 +261,12 @@ public class TaskService {
                 final Future futureImport = taskExecutor.submit(imsImportGoodsReceiptThread);
                 final Future futureTransfer = taskExecutor.submit(imsTransferGoodsReceiptThread);
                 final Future futureReturn = taskExecutor.submit(imsReturnGoodsReceiptThread);
+                final Future futureRetail = taskExecutor.submit(imsRetailGoodsReceiptThread);
 
                 futureImport.get();
                 futureTransfer.get();
                 futureReturn.get();
+                futureRetail.get();
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
