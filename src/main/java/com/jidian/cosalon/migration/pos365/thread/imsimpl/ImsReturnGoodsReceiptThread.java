@@ -45,12 +45,12 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
             final List<ReturnGoodsReceiptQueryDto> items = jdbcTemplate.query(
                     "select " +
                             "    a.id, a.branch_id, a.code, a.created_by, a.created_date, a.modified_by, a.modified_date, a.return_date, " +
-                            "    a.description, a.discount, a.status, a.total, a.total_payment, a.order_id, a.partner_id, " +
-                            "    c.id as supplier_id, d.ims_warehouse_id " +
+                            "    a.description, a.discount, a.status, a.total, a.total_payment, a.order_id, a.partner_id, e.code as order_code, " +
+                            "    d.ims_warehouse_id " +
                             "from p365_return a " +
-                            "         left outer join p365_partners b on a.partner_id = b.id " +
-                            "         left outer join ims_supplier c on b.code = c.code " +
-                            "         left join p365_branchs_ims_warehouse d on a.branch_id = d.p365_branchs_id " +
+                            "    left outer join p365_partners b on a.partner_id = b.id " +
+                            "    left join p365_branchs_ims_warehouse d on a.branch_id = d.p365_branchs_id " +
+                            "    left outer join p365_orders e on e.id = a.order_id " +
                             "order by a.id asc ",
                     (rs, rowNum) -> {
                     final ReturnGoodsReceiptQueryDto result = new ReturnGoodsReceiptQueryDto();
@@ -69,6 +69,7 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                     result.setTotalPayment(rs.getBigDecimal("total_payment"));
                     result.setOrderId(rs.getLong("order_id"));
                     result.setPartnerId(rs.getLong("partner_id"));
+                    result.setOrderCode(rs.getString("order_code"));
                     result.setImsWarehouseId(rs.getLong("ims_warehouse_id"));
                     return result;
                 }
@@ -140,7 +141,7 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                                             "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,4,1,?, " +
                                             "    null,null,?,null,null,?, " +
                                             "    0,?,?,?,null,null,null, " +
-                                            "    null,null,null,null,null,null,null,?) ",
+                                            "    null,null,null,null,?,null,null,?) ",
                                     new String[] {"id"});
                             int i = 1;
                             ps.setString(i++, item.getCode());
@@ -149,7 +150,8 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()));
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()).intValue() == 0 ? BigDecimal.ZERO : Utils.nvl(item.getDiscount()).divide(item.getTotal(), 2, RoundingMode.HALF_UP));
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal().subtract(Utils.nvl(item.getDiscount()))));
-                            ps.setLong(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).value);
+                            ps.setString(i++, Utils.nvl(item.getOrderCode()));
+                            ps.setLong(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).getGoodsReceiptStatus());
                             return ps;
                         },
                         keyHolder);
@@ -186,7 +188,7 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                                             "    import_export = 1, receipt_code = ?, supplier_id = null, gmt_delivery = null, gmt_import = ?, gmt_export = null, " +
                                             "    source_warehouse_id = null, dest_warehouse_id = ?, total_quantity = 0, total_pre_amount = ?, deduction = ?, total_amount = ?, " +
                                             "    creator_id = null, editor_id = null, finisher_id = null, requester_id = null, requester_type = null, requester_name = null, requester_phone_num = null, " +
-                                            "    order_num = null, reference = null, remark = null, status = ? WHERE id = ? ",
+                                            "    order_num = ?, reference = null, remark = null, status = ? WHERE id = ? ",
                                     new String[] {"id"});
                             int i = 1;
                             ps.setString(i++, item.getCode());
@@ -195,7 +197,8 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()));
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()).intValue() == 0 ? BigDecimal.ZERO : Utils.nvl(item.getDiscount()).divide(item.getTotal(), 2, RoundingMode.HALF_UP));
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal().subtract(Utils.nvl(item.getDiscount()))));
-                            ps.setLong(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).value);
+                            ps.setString(i++, Utils.nvl(item.getOrderCode()));
+                            ps.setLong(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).getGoodsReceiptStatus());
                             ps.setLong(i++, item.getImsGoodsReceiptId());
                             return ps;
                         });
@@ -236,6 +239,7 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
     private static class ReturnGoodsReceiptQueryDto extends Pos365Return {
         private Long imsWarehouseId;
         private Long imsGoodsReceiptId;
+        private String orderCode;
     }
 
     @Data
