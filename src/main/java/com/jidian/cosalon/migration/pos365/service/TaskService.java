@@ -143,6 +143,10 @@ public class TaskService {
     @Qualifier("imsReturnGoodsReceiptThread")
     private MyThread imsReturnGoodsReceiptThread;
 
+    @Autowired
+    @Qualifier("upmsUserThread")
+    private MyThread upmsUserThread;
+
     public Boolean createFetchingTask() throws Exception {
         if (Utils.SESSION_ID.isEmpty()) {
             Response<LoginResponse> response = pos365RetrofitService
@@ -257,6 +261,7 @@ public class TaskService {
             }
         });
         taskExecutor.execute(imsCustomerSuggestionThread);
+        taskExecutor.execute(upmsUserThread);
         return true;
     }
 }

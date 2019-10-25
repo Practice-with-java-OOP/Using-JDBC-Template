@@ -13,20 +13,20 @@ import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductOnHandByBranch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ReturnDetail;
+import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Stylist;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365TransfersDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.dto.LoginRequest;
 import com.jidian.cosalon.migration.pos365.dto.LoginResponse;
+import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
-
-import java.util.Map;
 
 public interface Pos365RetrofitService {
 
@@ -84,7 +84,7 @@ public interface Pos365RetrofitService {
         @Query("skip") Integer skip,
         @Query("PurchaseOrderId") Long orderStockId);
 
-    @GET("partners?GroupId=-1")
+    @GET("partners?GroupId=0")
     Call<BaseResponse<Pos365Partner>> listPartner(@HeaderMap Map<String, String> headers,
         @Query("top") Integer top, @Query("skip") Integer skip, @Query("Type") Integer type);
 
@@ -94,13 +94,17 @@ public interface Pos365RetrofitService {
 
     @GET("returns/detail?format=json")
     Call<BaseResponse<Pos365ReturnDetail>> listReturnDetail(
-            @HeaderMap Map<String, String> headers, @Query("top") Integer top,
-            @Query("skip") Integer skip,
-            @Query("ReturnId") Long returnId);
+        @HeaderMap Map<String, String> headers, @Query("top") Integer top,
+        @Query("skip") Integer skip,
+        @Query("ReturnId") Long returnId);
 
     @GET("orders/detail?format=json")
     Call<BaseResponse<Pos365OrderDetail>> listOrderDetail(
-            @HeaderMap Map<String, String> headers, @Query("top") Integer top,
-            @Query("skip") Integer skip,
-            @Query("OrderId") Long orderId);
+        @HeaderMap Map<String, String> headers, @Query("top") Integer top,
+        @Query("skip") Integer skip,
+        @Query("OrderId") Long orderId);
+
+    @GET("partners?Type=1&GroupId=2596&$filter=Department+eq+Stylist")
+    Call<BaseResponse<Pos365Stylist>> listStylists(@HeaderMap Map<String, String> headers,
+        @Query("top") Integer top, @Query("skip") Integer skip);
 }

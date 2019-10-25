@@ -1,5 +1,6 @@
 package com.jidian.cosalon.migration.pos365.config;
 
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -7,8 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-import javax.sql.DataSource;
 
 @Configuration
 public class JdbcConfig {
@@ -30,8 +29,19 @@ public class JdbcConfig {
         return buildDataSource(env, "spring.datasource2");
     }
 
+    @Bean(name = "db3")
+    @ConfigurationProperties(prefix = "spring.datasource3")
+    public DataSource dataSource3(Environment env) {
+        return buildDataSource(env, "spring.datasource3");
+    }
+
     @Bean(name = "omsJdbcTemplate")
     public JdbcTemplate jdbcTemplate2(@Qualifier("db2") DataSource ds) {
+        return new JdbcTemplate(ds);
+    }
+
+    @Bean(name = "upmsJdbcTemplate")
+    public JdbcTemplate jdbcTemplate3(@Qualifier("db3") DataSource ds) {
         return new JdbcTemplate(ds);
     }
 
