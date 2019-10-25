@@ -13,7 +13,6 @@ import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductHistory;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ProductOnHandByBranch;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ReturnDetail;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Stylist;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365TransfersDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
@@ -103,8 +102,4 @@ public interface Pos365RetrofitService {
         @HeaderMap Map<String, String> headers, @Query("top") Integer top,
         @Query("skip") Integer skip,
         @Query("OrderId") Long orderId);
-
-    @GET("partners?Type=1&GroupId=2596&$filter=Department+eq+Stylist")
-    Call<BaseResponse<Pos365Stylist>> listStylists(@HeaderMap Map<String, String> headers,
-        @Query("top") Integer top, @Query("skip") Integer skip);
 }
