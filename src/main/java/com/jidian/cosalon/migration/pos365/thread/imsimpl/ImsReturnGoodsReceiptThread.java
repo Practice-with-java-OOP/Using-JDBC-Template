@@ -2,7 +2,6 @@ package com.jidian.cosalon.migration.pos365.thread.imsimpl;
 
 import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.domain.GoodsReceipt;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ReturnDetail;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -61,7 +60,7 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                     result.setCreatedBy(rs.getLong("created_by"));
                     result.setModifiedBy(rs.getLong("modified_by"));
                     result.setModifiedDate(rs.getString("modified_date"));
-                    result.setReturnDate(rs.getString("modified_date"));
+                    result.setReturnDate(rs.getString("return_date"));
                     result.setDescription(rs.getString("description"));
                     result.setDiscount(rs.getBigDecimal("discount"));
                     result.setStatus(rs.getLong("status"));
