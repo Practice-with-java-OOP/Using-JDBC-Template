@@ -140,6 +140,10 @@ public class TaskService {
     private MyThread imsTransferGoodsReceiptThread;
 
     @Autowired
+    @Qualifier("imsReturnGoodsReceiptThread")
+    private MyThread imsReturnGoodsReceiptThread;
+
+    @Autowired
     @Qualifier("upmsUserThread")
     private MyThread upmsUserThread;
 
@@ -251,6 +255,7 @@ public class TaskService {
                 taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
                 taskExecutor.execute(imsImportGoodsReceiptThread);
                 taskExecutor.execute(imsTransferGoodsReceiptThread);
+                taskExecutor.execute(imsReturnGoodsReceiptThread);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
