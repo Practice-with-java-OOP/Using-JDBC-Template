@@ -34,6 +34,8 @@ public class Pos365User {
     private Boolean isAdmin;
     @JsonProperty("RetailerId")
     private Long retailerId;
+    @JsonProperty("Phone")
+    private String phone;
     @JsonProperty("CreatedBy")
     private Long createdBy;
     @JsonProperty("AdminGroup")
