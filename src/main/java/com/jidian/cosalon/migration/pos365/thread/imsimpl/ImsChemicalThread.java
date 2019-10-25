@@ -1,5 +1,6 @@
 package com.jidian.cosalon.migration.pos365.thread.imsimpl;
 
+import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Product;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import lombok.AllArgsConstructor;
@@ -75,7 +76,7 @@ public class ImsChemicalThread extends MyThread {
                                                 "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?,?,0,0,?,null)",
                                         new String[] {"id"});
                                 ps.setString(1, dto.getName());
-                                ps.setString(2, dto.getCode());
+                                ps.setString(2, Utils.nvl(dto.getCode()).trim());
                                 ps.setString(3, dto.getLargeUnit() == null ? "" : dto.getLargeUnit());
                                 return ps;
                             },
@@ -93,7 +94,7 @@ public class ImsChemicalThread extends MyThread {
                     insertedTotal += jdbcTemplate.update("UPDATE ims_chemical SET gmt_modified = CURRENT_TIMESTAMP(), version = version + 1, " +
                                     "   name = ?, code = ?, standard_unit = ?, price_standard_unit = null WHERE id = ?",
                             dto.getName(),
-                            dto.getCode(),
+                            Utils.nvl(dto.getCode()).trim(),
                             dto.getLargeUnit() == null ? "" : dto.getLargeUnit(),
 //                            dto.getPriceLargeUnit(),
                             dto.getImsChemicalId());
@@ -102,9 +103,9 @@ public class ImsChemicalThread extends MyThread {
 
                 // insert/update sub unit
                 if (chemicalId != null ) {
-                    insertOrUpdateSubUnit(chemicalId, 3, dto.getUnit(), dto.getPrice(), new BigDecimal(dto.getConversionValue())); // don vi luu kho
-                    insertOrUpdateSubUnit(chemicalId, 1, dto.getLargeUnit(), dto.getPriceLargeUnit(), new BigDecimal(1)); // don vi ban le
-                    insertOrUpdateSubUnit(chemicalId, 2, dto.getUnit(), dto.getPrice(), new BigDecimal(dto.getConversionValue())); // don vi ban theo dich vu
+                    insertOrUpdateSubUnit(chemicalId, 3, Utils.nvl(dto.getUnit()), Utils.nvl(dto.getPrice()), new BigDecimal(dto.getConversionValue())); // don vi luu kho
+                    insertOrUpdateSubUnit(chemicalId, 1, Utils.nvl(dto.getLargeUnit()), Utils.nvl(dto.getPriceLargeUnit()), new BigDecimal(1)); // don vi ban le
+                    insertOrUpdateSubUnit(chemicalId, 2, Utils.nvl(dto.getUnit()), Utils.nvl(dto.getPrice()), new BigDecimal(dto.getConversionValue())); // don vi ban theo dich vu
                 }
             });
         } catch (Exception e) {
@@ -115,45 +116,43 @@ public class ImsChemicalThread extends MyThread {
     }
 
     private void insertOrUpdateSubUnit(Long chemicalId, int subUnitType, String unit, BigDecimal unitPrice, BigDecimal exchange) {
-        if (unit != null && !unit.isEmpty()) {
-            final List<ChemicalSubUnitQueryDto> subUnits = jdbcTemplate.query(
-                    "select * from ims_chemical_sub_unit a where a.type = ? and a.chemical_id = ? order by a.id asc",  (rs, rowNum) -> {
-                        final ChemicalSubUnitQueryDto result = new ChemicalSubUnitQueryDto();
-                        result.setId(rs.getLong("id"));
-                        result.setVersion(rs.getLong("version"));
-                        result.setType(rs.getInt("type"));
-                        result.setName(rs.getString("name"));
-                        result.setPrice(rs.getBigDecimal("price"));
-                        result.setChemicalId(rs.getLong("chemical_id"));
-                        result.setStandardUnitExchange(rs.getString("standard_unit_exchange"));
-                        return result;
-                    },
-                    subUnitType,
-                    chemicalId
-            );
-            if (subUnits.size() <= 0) {
-                try {
-                    jdbcTemplate.update("INSERT INTO ims_chemical_sub_unit (gmt_create, gmt_modified, version, type, name, price, chemical_id, standard_unit_exchange) " +
-                                    "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?,?,?,?,?)",
-                            subUnitType,
-                            unit,
-                            unitPrice,
-                            chemicalId,
-                            exchange);
-                } catch (DataAccessException e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            } else {
-                for (int i = 0; i < subUnits.size(); i++) {
-                    jdbcTemplate.update("UPDATE ims_chemical_sub_unit SET  gmt_modified = CURRENT_TIMESTAMP(), version = version+1, " +
-                                    "type = ?, name = ?, price = ?, chemical_id = ?, standard_unit_exchange = ? WHERE id = ?",
-                            subUnitType,
-                            unit,
-                            unitPrice,
-                            chemicalId,
-                            exchange,
-                            subUnits.get(i).getId());
-                }
+        final List<ChemicalSubUnitQueryDto> subUnits = jdbcTemplate.query(
+                "select * from ims_chemical_sub_unit a where a.type = ? and a.chemical_id = ? order by a.id asc",  (rs, rowNum) -> {
+                    final ChemicalSubUnitQueryDto result = new ChemicalSubUnitQueryDto();
+                    result.setId(rs.getLong("id"));
+                    result.setVersion(rs.getLong("version"));
+                    result.setType(rs.getInt("type"));
+                    result.setName(rs.getString("name"));
+                    result.setPrice(rs.getBigDecimal("price"));
+                    result.setChemicalId(rs.getLong("chemical_id"));
+                    result.setStandardUnitExchange(rs.getString("standard_unit_exchange"));
+                    return result;
+                },
+                subUnitType,
+                chemicalId
+        );
+        if (subUnits.size() <= 0) {
+            try {
+                jdbcTemplate.update("INSERT INTO ims_chemical_sub_unit (gmt_create, gmt_modified, version, type, name, price, chemical_id, standard_unit_exchange) " +
+                                "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?,?,?,?,?)",
+                        subUnitType,
+                        unit,
+                        unitPrice,
+                        chemicalId,
+                        exchange);
+            } catch (DataAccessException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        } else {
+            for (int i = 0; i < subUnits.size(); i++) {
+                jdbcTemplate.update("UPDATE ims_chemical_sub_unit SET  gmt_modified = CURRENT_TIMESTAMP(), version = version+1, " +
+                                "type = ?, name = ?, price = ?, chemical_id = ?, standard_unit_exchange = ? WHERE id = ?",
+                        subUnitType,
+                        unit,
+                        unitPrice,
+                        chemicalId,
+                        exchange,
+                        subUnits.get(i).getId());
             }
         }
     }
