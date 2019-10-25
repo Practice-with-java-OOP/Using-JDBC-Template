@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -141,13 +140,14 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                                         "    total_quantity, total_pre_amount, deduction, total_amount, creator_id, editor_id, finisher_id, " +
                                         "    requester_id, requester_type, requester_name, requester_phone_num, order_num, reference, remark, status) " +
                                         "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,1,1,?, " +
-                                        "    ?,?,null,null,null,?, " +
+                                        "    ?,?,?,null,null,?, " +
                                         "    0,?,?,?,null,null,null, " +
                                         "    null,null,null,null,null,null,null,?) ",
                                     new String[] {"id"});
                             int i = 1;
                             ps.setString(i++, item.getCode());
                             ps.setLong(i++, item.getImsSupplierId());
+                            ps.setTimestamp(i++, item.getDeliveryDate());
                             ps.setTimestamp(i++, item.getDeliveryDate());
                             ps.setLong(i++, item.getImsWarehouseId());
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()));
@@ -183,7 +183,7 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                         connection -> {
                             PreparedStatement ps = connection.prepareStatement(
                                     "UPDATE ims_goods_receipt SET gmt_modified = CURRENT_TIMESTAMP(), version = version+1, type = 1, " +
-                                            "    import_export = 1, receipt_code = ?, supplier_id = ?, gmt_delivery = ?, gmt_import = null, gmt_export = null, " +
+                                            "    import_export = 1, receipt_code = ?, supplier_id = ?, gmt_delivery = ?, gmt_import = ?, gmt_export = null, " +
                                             "    source_warehouse_id = null, dest_warehouse_id = ?, total_quantity = 0, total_pre_amount = ?, deduction = ?, total_amount = ?, " +
                                             "    creator_id = null, editor_id = null, finisher_id = null, requester_id = null, requester_type = null, requester_name = null, requester_phone_num = null, " +
                                             "    order_num = null, reference = null, remark = null, status = ? WHERE id = ? ",
@@ -191,6 +191,7 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                             int i = 1;
                             ps.setString(i++, item.getCode());
                             ps.setLong(i++, item.getImsSupplierId());
+                            ps.setTimestamp(i++, item.getDeliveryDate());
                             ps.setTimestamp(i++, item.getDeliveryDate());
                             ps.setLong(i++, item.getImsWarehouseId());
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()));
