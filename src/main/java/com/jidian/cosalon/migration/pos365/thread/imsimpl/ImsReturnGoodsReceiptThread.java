@@ -2,7 +2,6 @@ package com.jidian.cosalon.migration.pos365.thread.imsimpl;
 
 import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.domain.GoodsReceipt;
-import com.jidian.cosalon.migration.pos365.domainpos365.Pos365OrderStockDetail;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Return;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365ReturnDetail;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -61,7 +60,7 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                     result.setCreatedBy(rs.getLong("created_by"));
                     result.setModifiedBy(rs.getLong("modified_by"));
                     result.setModifiedDate(rs.getString("modified_date"));
-                    result.setReturnDate(rs.getString("modified_date"));
+                    result.setReturnDate(rs.getString("return_date"));
                     result.setDescription(rs.getString("description"));
                     result.setDiscount(rs.getBigDecimal("discount"));
                     result.setStatus(rs.getLong("status"));
@@ -140,7 +139,7 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                                             "    requester_id, requester_type, requester_name, requester_phone_num, order_num, reference, remark, status) " +
                                             "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,4,1,?, " +
                                             "    null,null,?,null,null,?, " +
-                                            "    0,?,?,?,null,null,null, " +
+                                            "    0,?,?,?,1,null,null, " +
                                             "    null,null,null,null,?,null,null,?) ",
                                     new String[] {"id"});
                             int i = 1;
@@ -187,7 +186,7 @@ public class ImsReturnGoodsReceiptThread extends MyThread {
                                     "UPDATE ims_goods_receipt SET gmt_modified = CURRENT_TIMESTAMP(), version = version+1, type = 4, " +
                                             "    import_export = 1, receipt_code = ?, supplier_id = null, gmt_delivery = null, gmt_import = ?, gmt_export = null, " +
                                             "    source_warehouse_id = null, dest_warehouse_id = ?, total_quantity = 0, total_pre_amount = ?, deduction = ?, total_amount = ?, " +
-                                            "    creator_id = null, editor_id = null, finisher_id = null, requester_id = null, requester_type = null, requester_name = null, requester_phone_num = null, " +
+                                            "    creator_id = 1, editor_id = null, finisher_id = null, requester_id = null, requester_type = null, requester_name = null, requester_phone_num = null, " +
                                             "    order_num = ?, reference = null, remark = null, status = ? WHERE id = ? ",
                                     new String[] {"id"});
                             int i = 1;

@@ -7,9 +7,6 @@ import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import com.jidian.cosalon.migration.pos365.thread.MyThreadStatus;
-import java.util.Map;
-import java.util.concurrent.Future;
-import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
+import java.util.concurrent.Future;
 
 @Service
 public class TaskService {
@@ -253,9 +254,13 @@ public class TaskService {
                 futureSupplier.get();
 
                 taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
-                taskExecutor.execute(imsImportGoodsReceiptThread);
-                taskExecutor.execute(imsTransferGoodsReceiptThread);
-                taskExecutor.execute(imsReturnGoodsReceiptThread);
+                final Future futureImport = taskExecutor.submit(imsImportGoodsReceiptThread);
+                final Future futureTransfer = taskExecutor.submit(imsTransferGoodsReceiptThread);
+                final Future futureReturn = taskExecutor.submit(imsReturnGoodsReceiptThread);
+
+                futureImport.get();
+                futureTransfer.get();
+                futureReturn.get();
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

@@ -5,14 +5,6 @@ import com.jidian.cosalon.migration.pos365.Utils.StatusEnum;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Transfer;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365TransfersDetail;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
-import java.sql.PreparedStatement;
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +13,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component("imsTransferGoodsReceiptThread")
 public class ImsTransferGoodsReceiptThread extends MyThread {
@@ -105,7 +106,7 @@ public class ImsTransferGoodsReceiptThread extends MyThread {
                                 + " total_quantity,total_pre_amount, deduction, total_amount, "
                                 + " creator_id, editor_id,finisher_id, requester_id, requester_type,"
                                 + " requester_name,requester_phone_num, order_num, reference, remark, status)"
-                                + " values (?, ?, 0, 2, 3, ?, null, null, null, ?, ?, ?, 0, 0, 0, 0,null, "
+                                + " values (?, ?, 0, 2, 3, ?, null, null, null, ?, ?, ?, 0, 0, 0, 0,1, "
                                 + " null, null, null, null, null, null, null, null, null, ?)"
                                 + " on duplicate key update gmt_modified = CURRENT_TIMESTAMP(), "
                                 + " version = version + 1,type = 2, import_export = 3, "
