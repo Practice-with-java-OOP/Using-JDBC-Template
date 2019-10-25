@@ -109,22 +109,29 @@ public class ImsImportGoodsReceiptThread extends MyThread {
             );
             Map<Long, List<ImportGoodsReceiptChemicalQueryDto>> detailMap = details.stream().collect(Collectors.groupingBy(Pos365OrderStockDetail::getPurchaseOrderId));
 
-//            final List<GoodsReceipt> existing = jdbcTemplate.query(
-//                    "select * from ims_goods_receipt a where a.type = 1 ",
-//                    (rs, rowNum) -> {
-//                        final GoodsReceipt result = new GoodsReceipt();
-//                        result.setId(rs.getLong("id"));
-//                        result.setType(rs.getInt("type"));
-//                        result.setReceiptCode(rs.getString("receipt_code"));
-//                        return result;
-//                    }
-//            );
-//            Map<String, List<GoodsReceipt>> existingMap = existing.stream().collect(Collectors.groupingBy(GoodsReceipt::getReceiptCode));
-//            List<GoodsReceipt> inserts = new ArrayList<>();
-//            List<GoodsReceipt> updates = new ArrayList<>();
-
-
+            final List<GoodsReceipt> existing = jdbcTemplate.query(
+                    "select * from ims_goods_receipt a where a.type = 1 ",
+                    (rs, rowNum) -> {
+                        final GoodsReceipt result = new GoodsReceipt();
+                        result.setId(rs.getLong("id"));
+                        result.setType(rs.getInt("type"));
+                        result.setReceiptCode(rs.getString("receipt_code"));
+                        return result;
+                    }
+            );
+            Map<String, List<GoodsReceipt>> existingMap = existing.stream().collect(Collectors.groupingBy(GoodsReceipt::getReceiptCode));
+            List<ImportGoodsReceiptQueryDto> inserts = new ArrayList<>();
+            List<ImportGoodsReceiptQueryDto> updates = new ArrayList<>();
             items.forEach(item -> {
+                if (existingMap.containsKey(Utils.nvl(item.getCode()).trim())) {
+                    item.setImsGoodsReceiptId(existingMap.get(Utils.nvl(item.getCode()).trim()).get(0).getId());
+                    updates.add(item);
+                } else {
+                    inserts.add(item);
+                }
+            });
+
+            inserts.forEach(item -> {
                 KeyHolder keyHolder = new GeneratedKeyHolder();
                 insertedTotal += jdbcTemplate.update(
                         connection -> {
@@ -136,29 +143,17 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                                         "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,1,1,?, " +
                                         "    ?,?,null,null,null,?, " +
                                         "    0,?,?,?,null,null,null, " +
-                                        "    null,null,null,null,null,null,null,?) " +
-                                        "ON DUPLICATE KEY UPDATE gmt_modified = CURRENT_TIMESTAMP(), version = version+1, type = 1, import_export = 1, receipt_code = ?, " +
-                                        "    supplier_id = ?, gmt_delivery = ?, gmt_import = null, gmt_export = null, source_warehouse_id = null, dest_warehouse_id = ?, " +
-                                        "    total_quantity = 0, total_pre_amount = ?, deduction = ?, total_amount = ?, creator_id = null, editor_id = null, finisher_id = null, " +
-                                        "    requester_id = null, requester_type = null, requester_name = null, requester_phone_num = null, order_num = null, reference = null, remark = null, status = ? ",
+                                        "    null,null,null,null,null,null,null,?) ",
                                     new String[] {"id"});
                             int i = 1;
                             ps.setString(i++, item.getCode());
                             ps.setLong(i++, item.getImsSupplierId());
                             ps.setTimestamp(i++, item.getDeliveryDate());
                             ps.setLong(i++, item.getImsWarehouseId());
-                            ps.setBigDecimal(i++, item.getTotal());
-                            ps.setBigDecimal(i++, Utils.nvl(item.getTotal()).intValue() == 0 ? BigDecimal.ZERO : item.getDiscount().divide(item.getTotal(), 2, RoundingMode.HALF_UP));
-                            ps.setBigDecimal(i++, item.getTotal());
-                            ps.setInt(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).value);
-                            ps.setString(i++, Utils.nvl(item.getCode()).trim());
-                            ps.setLong(i++, item.getImsSupplierId());
-                            ps.setTimestamp(i++, item.getDeliveryDate());
-                            ps.setLong(i++, item.getImsWarehouseId());
-                            ps.setBigDecimal(i++, item.getTotal());
-                            ps.setBigDecimal(i++, Utils.nvl(item.getTotal()).intValue() == 0 ? BigDecimal.ZERO : item.getDiscount().divide(item.getTotal(), 2, RoundingMode.HALF_UP));
-                            ps.setBigDecimal(i++, item.getTotal());
-                            ps.setInt(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).value);
+                            ps.setBigDecimal(i++, Utils.nvl(item.getTotal()));
+                            ps.setBigDecimal(i++, Utils.nvl(item.getTotal()).intValue() == 0 ? BigDecimal.ZERO : Utils.nvl(item.getDiscount()).divide(item.getTotal(), 2, RoundingMode.HALF_UP));
+                            ps.setBigDecimal(i++, Utils.nvl(item.getTotal().subtract(Utils.nvl(item.getDiscount()))));
+                            ps.setInt(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).getGoodsReceiptStatus());
                             return ps;
                         },
                         keyHolder);
@@ -174,6 +169,50 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                                         "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?, " +
                                         "    ?,null,9,?,?,null,?,?) ",
                                 keyHolder.getKey().longValue(),
+                                subDetail.getImsChemicalId(),
+                                subDetail.getStandardUnit(),
+                                subDetail.getPrice(),
+                                subDetail.getQuantity(),
+                                Utils.nvl(subDetail.getPrice()).multiply(new BigDecimal(Utils.nvl(subDetail.getQuantity()))));
+                    });
+
+                }
+            });
+            updates.forEach(item -> {
+                insertedTotal += jdbcTemplate.update(
+                        connection -> {
+                            PreparedStatement ps = connection.prepareStatement(
+                                    "UPDATE ims_goods_receipt SET gmt_modified = CURRENT_TIMESTAMP(), version = version+1, type = 1, " +
+                                            "    import_export = 1, receipt_code = ?, supplier_id = ?, gmt_delivery = ?, gmt_import = null, gmt_export = null, " +
+                                            "    source_warehouse_id = null, dest_warehouse_id = ?, total_quantity = 0, total_pre_amount = ?, deduction = ?, total_amount = ?, " +
+                                            "    creator_id = null, editor_id = null, finisher_id = null, requester_id = null, requester_type = null, requester_name = null, requester_phone_num = null, " +
+                                            "    order_num = null, reference = null, remark = null, status = ? WHERE id = ? ",
+                                    new String[] {"id"});
+                            int i = 1;
+                            ps.setString(i++, item.getCode());
+                            ps.setLong(i++, item.getImsSupplierId());
+                            ps.setTimestamp(i++, item.getDeliveryDate());
+                            ps.setLong(i++, item.getImsWarehouseId());
+                            ps.setBigDecimal(i++, Utils.nvl(item.getTotal()));
+                            ps.setBigDecimal(i++, Utils.nvl(item.getTotal()).intValue() == 0 ? BigDecimal.ZERO : Utils.nvl(item.getDiscount()).divide(item.getTotal(), 2, RoundingMode.HALF_UP));
+                            ps.setBigDecimal(i++, Utils.nvl(item.getTotal().subtract(Utils.nvl(item.getDiscount()))));
+                            ps.setString(i++, Utils.nvl(item.getOrderCode()));
+                            ps.setLong(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).getGoodsReceiptStatus());
+                            ps.setLong(i++, item.getImsGoodsReceiptId());
+                            return ps;
+                        });
+                List<ImportGoodsReceiptChemicalQueryDto> subDetails = detailMap.get(item.getId());
+                if (subDetails != null) {
+                    if (!subDetails.isEmpty()) {
+                        jdbcTemplate.update("delete from ims_goods_receipt_chemical where goods_receipt_id = ?", item.getImsGoodsReceiptId());
+                    }
+                    subDetails.forEach(subDetail -> {
+                        jdbcTemplate.update(
+                                "INSERT INTO ims_goods_receipt_chemical (gmt_create, gmt_modified, version, goods_receipt_id, " +
+                                        "    chemical_id, unit_id, unit_type, unit_name, unit_price, standard_unit_exchange, quantity, total_price) " +
+                                        "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?, " +
+                                        "    ?,null,9,?,?,null,?,?) ",
+                                item.getImsGoodsReceiptId(),
                                 subDetail.getImsChemicalId(),
                                 subDetail.getStandardUnit(),
                                 subDetail.getPrice(),
@@ -206,6 +245,8 @@ public class ImsImportGoodsReceiptThread extends MyThread {
     private static class ImportGoodsReceiptQueryDto extends Pos365OrderStock {
         private Long imsSupplierId;
         private Long imsWarehouseId;
+        private Long imsGoodsReceiptId;
+        private String orderCode;
     }
 
     @Data

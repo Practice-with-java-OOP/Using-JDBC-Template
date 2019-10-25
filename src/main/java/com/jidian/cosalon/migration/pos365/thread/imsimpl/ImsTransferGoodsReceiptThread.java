@@ -128,7 +128,7 @@ public class ImsTransferGoodsReceiptThread extends MyThread {
                         ps.setInt(index++,
                             Utils.StatusEnum.resolve(Utils.nvl(transaction.getStatus())) == null
                                 ? 10 : Objects.requireNonNull(
-                                StatusEnum.resolve(Utils.nvl(transaction.getStatus()))).getValue());
+                                StatusEnum.resolve(Utils.nvl(transaction.getStatus()))).getGoodsReceiptStatus());
                         ps.setString(index++, transaction.getCode());
                         ps.setTimestamp(index++, convertTimestamp(transaction.getDocumentDate()));
                         ps.setLong(index++, transaction.getSourceWarehouseId());
@@ -136,7 +136,7 @@ public class ImsTransferGoodsReceiptThread extends MyThread {
                         ps.setInt(index++,
                             Utils.StatusEnum.resolve(Utils.nvl(transaction.getStatus())) == null
                                 ? 10 : Objects.requireNonNull(
-                                StatusEnum.resolve(Utils.nvl(transaction.getStatus()))).getValue());
+                                StatusEnum.resolve(Utils.nvl(transaction.getStatus()))).getGoodsReceiptStatus());
                         return ps;
                     },
                     keyHolder);
