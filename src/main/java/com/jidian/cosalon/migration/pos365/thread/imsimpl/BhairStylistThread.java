@@ -75,6 +75,23 @@ public class BhairStylistThread extends MyThread {
                     },
                     keyHolder
                 );
+
+                // migrate data to ams_account
+                amsJdbcTemplate.update(
+                    "insert into cosalon_ams.ams_account "
+                        + " (gmt_create, gmt_modified, version, account_name, account_status, "
+                        + " account_type, balance, today_expend, today_income, total_expend, "
+                        + " total_income, unbalance, user_id, username) "
+                        + " values (?, ?, 0, null, 1, 2, ?, 0, "
+                        + " 0, 0, 0, 0, ?, ?)",
+                    Utils.convertTimestamp(stylist.getCreatedDate()),
+                    stylist.getModifiedDate() == null ? new Timestamp(System.currentTimeMillis())
+                        : Utils.convertTimestamp(stylist.getModifiedDate()),
+                    stylist.getTotalDebt(),
+                    keyHolder.getKey().longValue(),
+                    stylist.getCode()
+                );
+
             });
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
