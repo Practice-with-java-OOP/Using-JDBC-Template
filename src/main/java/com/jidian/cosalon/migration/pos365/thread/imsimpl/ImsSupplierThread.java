@@ -4,10 +4,14 @@ import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.domain.ImsSupplier;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +70,16 @@ public class ImsSupplierThread extends MyThread {
                 return result;
             });
 
+            final List<Pos365OrderStockDto> orderStocks = jdbcTemplate.query("SELECT SUM(total) as total, partner_id " +
+                    "from p365_order_stock WHERE status = 2 and partner_id is not null GROUP by partner_id", (rs, rowNum) -> {
+                final Pos365OrderStockDto result = new Pos365OrderStockDto();
+                result.setPartnerId(rs.getLong("partner_id"));
+                result.setTotal(rs.getBigDecimal("total"));
+                return result;
+            });
+
+            Map<Long, BigDecimal> totalAmountMap = orderStocks.stream().collect(Collectors.toMap(Pos365OrderStockDto::getPartnerId, Pos365OrderStockDto::getTotal));
+
             List<Pos365Partner> partnerInserts = new ArrayList<>();
             List<Pos365Partner> partnerUpdates = new ArrayList<>();
 
@@ -85,7 +99,7 @@ public class ImsSupplierThread extends MyThread {
                                 "(code, name, phone_number_1, address_1, transaction_quantity, transaction_amount, status, gmt_create, gmt_modified, version)" +
                                 "VALUES (?,?,?,?,?,?,?,?,?,?)",
                         partner.getCode(), partner.getName(), partner.getPhone() != null ? partner.getPhone() : Utils.PHONE_NUM,
-                        partner.getAddress() != null ? partner.getAddress() : partner.getName(), Math.toIntExact(partner.getTotalTransactionValue()), partner.getDebt(),
+                        partner.getAddress() != null ? partner.getAddress() : partner.getName(), Math.toIntExact(partner.getTotalTransactionValue()), totalAmountMap.get(partner.getId()),
                         1, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), 0
                 );
             });
@@ -97,7 +111,7 @@ public class ImsSupplierThread extends MyThread {
                                 "gmt_create = ?, gmt_modified = ?, version = version + 1 where id = ?",
                         partner.getPhone() != null ? partner.getPhone() : supplier.getPhoneNum(),
                         partner.getAddress() != null ? partner.getAddress() : supplier.getAddress(),
-                        Math.toIntExact(partner.getTotalTransactionValue()), partner.getDebt(),
+                        Math.toIntExact(partner.getTotalTransactionValue()), totalAmountMap.get(partner.getId()),
                         supplier.getGmtCreate(), new Timestamp(System.currentTimeMillis()), supplier.getId()
                 );
             });
@@ -130,5 +144,13 @@ public class ImsSupplierThread extends MyThread {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private static class Pos365OrderStockDto {
+        private BigDecimal total;
+        private Long partnerId;
     }
 }
