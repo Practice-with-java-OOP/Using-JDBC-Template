@@ -36,6 +36,14 @@ public abstract class MyThread implements Runnable {
     @Qualifier("upmsJdbcTemplate")
     protected JdbcTemplate upmsJdbcTemplate;
 
+    @Autowired
+    @Qualifier("bhairJdbcTemplate")
+    protected JdbcTemplate bhairJdbcTemplate;
+
+    @Autowired
+    @Qualifier("amsJdbcTemplate")
+    protected JdbcTemplate amsJdbcTemplate;
+
     @Getter
     protected MyThreadStatus status = MyThreadStatus.IDLE;
 
@@ -76,7 +84,8 @@ public abstract class MyThread implements Runnable {
             status = MyThreadStatus.IDLE;
             taskRepository.updateThread(getName(), status);
         } finally {
-            LOGGER.info("{} run time elapsed: {}s", getName(), (System.currentTimeMillis() - currMillis) / 1000);
+            LOGGER.info("{} run time elapsed: {}s", getName(),
+                (System.currentTimeMillis() - currMillis) / 1000);
         }
     }
 
