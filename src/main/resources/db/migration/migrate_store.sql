@@ -26,4 +26,5 @@ INSERT INTO cosalon_ims.ims_warehouse_store (gmt_create, gmt_modified, version, 
 INSERT INTO cosalon_ims.ims_warehouse_store (gmt_create, gmt_modified, version, warehouse_id, store_id, store_name) VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,3,14,'Cosalon Vũ Phạm Hàm');
 INSERT INTO cosalon_ims.ims_warehouse_store (gmt_create, gmt_modified, version, warehouse_id, store_id, store_name) VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,4,17,'Cosalon Xala');
 INSERT INTO cosalon_ims.ims_warehouse_store (gmt_create, gmt_modified, version, warehouse_id, store_id, store_name) VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,5,15,'121 Đội Cấn, Ba Đình - Coming soon');
+INSERT INTO cosalon_ims.ims_warehouse_store (gmt_create, gmt_modified, version, warehouse_id, store_id, store_name) VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,2,13,'Cosalon Nguyễn Tuân');
 commit ;

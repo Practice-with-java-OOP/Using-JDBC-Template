@@ -3,10 +3,6 @@ package com.jidian.cosalon.migration.pos365.thread;
 import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.repository.TaskRepository;
 import com.jidian.cosalon.migration.pos365.retrofitservice.Pos365RetrofitService;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +11,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import retrofit2.Retrofit;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.HashMap;
+import java.util.Map;
 
 //@Component
 //@Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -43,6 +44,10 @@ public abstract class MyThread implements Runnable {
     @Autowired
     @Qualifier("amsJdbcTemplate")
     protected JdbcTemplate amsJdbcTemplate;
+
+    @Autowired
+    @Qualifier("omsJdbcTemplate")
+    protected JdbcTemplate omsJdbcTemplate;
 
     @Getter
     protected MyThreadStatus status = MyThreadStatus.IDLE;

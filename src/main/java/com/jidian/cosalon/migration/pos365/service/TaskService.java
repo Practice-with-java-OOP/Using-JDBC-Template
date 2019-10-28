@@ -149,6 +149,10 @@ public class TaskService {
     private MyThread imsRetailGoodsReceiptThread;
 
     @Autowired
+    @Qualifier("omsOrderThread")
+    private MyThread omsOrderThread;
+
+    @Autowired
     @Qualifier("upmsUserThread")
     private MyThread upmsUserThread;
 
@@ -271,6 +275,9 @@ public class TaskService {
                 futureTransfer.get();
                 futureReturn.get();
                 futureRetail.get();
+
+                final Future futureOrder = taskExecutor.submit(omsOrderThread);
+                futureOrder.get();
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
