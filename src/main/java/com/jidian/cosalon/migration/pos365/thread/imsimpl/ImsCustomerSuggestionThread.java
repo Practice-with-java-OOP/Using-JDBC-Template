@@ -22,12 +22,11 @@ public class ImsCustomerSuggestionThread extends MyThread {
     }
 
     private int insertedTotal = 0;
-    private int assumptionTotal = 0;
 
     @Override
     public void doRun() {
         insertedTotal = 0;
-        assumptionTotal = 0;
+        int assumptionTotal = 0;
         try {
             // migrate data
             final List<Pos365Partner> items = jdbcTemplate
@@ -42,7 +41,7 @@ public class ImsCustomerSuggestionThread extends MyThread {
                     }
                 );
             assumptionTotal = items.size();
-            items.forEach(item -> {
+            items.forEach(customer -> {
                 KeyHolder keyHolder = new GeneratedKeyHolder();
                 insertedTotal += jdbcTemplate.update(
                     connection -> {
@@ -55,12 +54,15 @@ public class ImsCustomerSuggestionThread extends MyThread {
                                 + " version = version + 1, customer_name = ?, phone_number = ?, "
                                 + " is_system_user = 1, is_stylist = 0, is_non_resident_customer = 0 ",
                             new String[]{"id"});
-                        ps.setString(1, item.getName());
-                        ps.setString(2, Utils.isBlank(Utils.normalize(item.getPhone())) ?
-                            Utils.normalize(item.getCode()) : Utils.normalize(item.getPhone()));
-                        ps.setString(3, item.getName());
-                        ps.setString(4, Utils.isBlank(Utils.normalize(item.getPhone())) ?
-                            Utils.normalize(item.getCode()) : Utils.normalize(item.getPhone()));
+                        int index = 1;
+                        ps.setString(index++, customer.getName());
+                        ps.setString(index++, Utils.isBlank(Utils.normalize(customer.getPhone())) ?
+                            Utils.normalize(customer.getCode())
+                            : Utils.normalize(customer.getPhone()));
+                        ps.setString(index++, customer.getName());
+                        ps.setString(index, Utils.isBlank(Utils.normalize(customer.getPhone())) ?
+                            Utils.normalize(customer.getCode())
+                            : Utils.normalize(customer.getPhone()));
                         return ps;
                     },
                     keyHolder);
