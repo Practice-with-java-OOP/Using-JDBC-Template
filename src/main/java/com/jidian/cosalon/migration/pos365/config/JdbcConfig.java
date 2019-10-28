@@ -82,12 +82,17 @@ public class JdbcConfig {
     @Primary
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-        EntityManagerFactoryBuilder builder, @Qualifier("db1") DataSource dataSource) {
+        EntityManagerFactoryBuilder builder,
+        @Qualifier("db1") DataSource dataSource,
+        Environment env) {
         HashMap<String, Object> properties = new HashMap<>();
         properties
-            .put("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+            .put("hibernate.dialect", env.getProperty("spring.jpa.properties.hibernate.dialect"));
         properties
-            .put("hibernate.hbm2ddl", "auto=update");
+            .put("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.properties.hibernate.hbm2ddl.auto"));
+        properties
+            .put("hibernate.physical_naming_strategy", "com.jidian.cosalon.migration.pos365.config.NamingStrategy");
+
         return builder
             .dataSource(dataSource)
             .properties(properties)
