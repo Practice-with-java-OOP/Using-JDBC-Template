@@ -31,11 +31,15 @@ public class UpmsUserThread extends MyThread {
     public String getName() {
         return "UpmsUserThread";
     }
+    int counter = 0;
+    int counter2 = 0;
 
     @Override
     public void doRun() {
         try {
             // migrate from p365_users
+            counter = 0;
+            counter2 = 0;
             final List<Pos365User> users = jdbcTemplate
                 .query("select * from p365_users u where u.is_admin = false and is_active = true",
                     (rs, rowNum) -> {
@@ -51,11 +55,13 @@ public class UpmsUserThread extends MyThread {
                 insertedTotal += upmsJdbcTemplate.update(
                     connection -> {
                         PreparedStatement ps = connection.prepareStatement("insert into upms_user"
-                            + "(gmt_create, gmt_modified, version, avatar, email, ext1, ext2, ext3, "
+                            + "(id, gmt_create, gmt_modified, version, avatar, email, ext1, ext2, ext3, "
                             + " is_locked, nickname, password, phone_num, is_sys_built_in, username)"
-                            + " values (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, null, null, null, "
+                            + " values (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, null, null, null, "
                             + " null, null, 0, ?, null, ?, 0, ?)", new String[]{"id"});
                         int index = 1;
+                        ps.setLong(index++, startUserId + counter);
+                        counter++;
                         ps.setString(index++, user.getName());
                         ps.setString(index++, Utils.genP365PhoneNumber(user.getId().toString()));
                         ps.setString(index, user.getUsername());
@@ -86,10 +92,8 @@ public class UpmsUserThread extends MyThread {
                         return result;
                     });
             assumptionInsertFromPartner = partners.size();
-            for (int i = 0; i < partners.size(); i++) {
-                Pos365Partner p365User = partners.get(i);
+            partners.forEach(p365User -> {
                 KeyHolder keyHolder = new GeneratedKeyHolder();
-                int finalI = i;
                 insertedFromPartnerTotal += upmsJdbcTemplate.update(
                         connection -> {
                             PreparedStatement ps = connection
@@ -100,7 +104,8 @@ public class UpmsUserThread extends MyThread {
                                                     + " null, null, null, null, 0, ?, null, ?, 0, ?)",
                                             new String[]{"id"});
                             int index = 1;
-                            ps.setLong(index++, finalI + startUserId);
+                            ps.setLong(index++, counter + startUserId);
+                            counter++;
                             ps.setString(index++, p365User.getName());
                             ps.setString(index++, p365User.getPhone() == null ? Utils
                                     .genP365PhoneNumber(p365User.getId().toString())
@@ -122,7 +127,8 @@ public class UpmsUserThread extends MyThread {
                                                     + " 0, 0, 0, 0, ?, ?)",
                                             new String[]{"id"});
                             int index = 1;
-                            ps.setLong(index++, finalI + startAccountId);
+                            ps.setLong(index++, counter2 + startAccountId);
+                            counter2++;
                             ps.setBigDecimal(index++, p365User.getTotalDebt().compareTo(
                                     BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
                                     : BigDecimal.valueOf(0));
@@ -130,7 +136,7 @@ public class UpmsUserThread extends MyThread {
                             ps.setString(index, p365User.getCode());
                             return ps;
                         });
-            }
+            });
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
