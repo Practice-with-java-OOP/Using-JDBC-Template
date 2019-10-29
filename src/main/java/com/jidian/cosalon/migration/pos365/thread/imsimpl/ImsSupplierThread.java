@@ -99,7 +99,7 @@ public class ImsSupplierThread extends MyThread {
                                 "(code, name, phone_number_1, address_1, transaction_quantity, transaction_amount, status, gmt_create, gmt_modified, version)" +
                                 "VALUES (?,?,?,?,?,?,?,?,?,?)",
                         partner.getCode(), partner.getName(), partner.getPhone() != null ? partner.getPhone() : Utils.PHONE_NUM,
-                        partner.getAddress() != null ? partner.getAddress() : partner.getName(), Math.toIntExact(partner.getTotalTransactionValue()), totalAmountMap.get(partner.getId()),
+                        partner.getAddress() != null ? partner.getAddress() : "unknown", Math.toIntExact(partner.getTotalTransactionValue()), totalAmountMap.get(partner.getId()),
                         1, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), 0
                 );
             });
@@ -110,7 +110,7 @@ public class ImsSupplierThread extends MyThread {
                         "UPDATE ims_supplier SET phone_number_1 = ?, address_1 = ?, transaction_quantity = ?, transaction_amount = ?, " +
                                 "gmt_create = ?, gmt_modified = ?, version = version + 1 where id = ?",
                         partner.getPhone() != null ? partner.getPhone() : supplier.getPhoneNum(),
-                        partner.getAddress() != null ? partner.getAddress() : supplier.getAddress(),
+                        partner.getAddress() != null ? partner.getAddress() : "unknown",
                         Math.toIntExact(partner.getTotalTransactionValue()), totalAmountMap.get(partner.getId()),
                         supplier.getGmtCreate(), new Timestamp(System.currentTimeMillis()), supplier.getId()
                 );
