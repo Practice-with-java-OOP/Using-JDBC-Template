@@ -20,7 +20,7 @@ public class BhairStylistThread extends MyThread {
     private int insertedTotal = 0;
     private int assumptionTotal = 0;
     private long startId = 102L;
-    private long startAccountId = 250L;
+    private long startAccountId = 169L;
 
     @Override
     public String getName() {

@@ -34,7 +34,9 @@ public class OmsOrderThread extends MyThread {
 
     private int insertedTotal = 0;
     private int assumptionTotal = 0;
-    private long startOrderId = 1146L;
+    private long startOrderId = 1249L;
+    private long startItemId = 2194L;
+    private long itemCounter = 0L;
     private long endOrderId = 0L;
 
     @Override
@@ -161,6 +163,7 @@ public class OmsOrderThread extends MyThread {
                 omsJdbcTemplate.update("delete from cosalon_oms.oms_order where id >= ?", startOrderId);
             }
 
+            itemCounter = 0L;
             for (int index = 0; index < items.size(); index++) {
                 final RetailGoodsReceiptQueryDto item = items.get(index);
                 KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -215,18 +218,20 @@ public class OmsOrderThread extends MyThread {
                         omsJdbcTemplate.update(
                                 connection -> {
                                     PreparedStatement ps = connection.prepareStatement(
-                                            "INSERT INTO cosalon_oms.oms_order_item (gmt_create, gmt_modified, version, actual_amount_paid, " +
+                                            "INSERT INTO cosalon_oms.oms_order_item (id, gmt_create, gmt_modified, version, actual_amount_paid, " +
                                                     "    image_url, item_id, item_name, item_properties, nursing_staff_fee, nursing_staff_id, quantity, " +
                                                     "    rented_seat_id, seat_owner_id, seat_rental_fee, total_price, unit_price, order_id, " +
                                                     "    nursing_staff_avatar, nursing_staff_display_name, rented_seat_name, seat_owner_avatar, " +
                                                     "    seat_owner_display_name, price_list_id, platform_commission_ratio) " +
-                                                    "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?, " +
+                                                    "VALUES (?, CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?, " +
                                                     "    null,?,?,null,null,?,?, " +
                                                     "    null,null,null,?,?,?, " +
                                                     "    null,?,null,null, " +
                                                     "    null,?,0.0) ",
                                             new String[] {"id"});
                                     int i = 1;
+                                    ps.setLong(i++, itemCounter + startItemId);
+                                    itemCounter++;
                                     ps.setBigDecimal(i++, subDetail.getPrice());
                                     ps.setLong(i++, 1000000L + subDetail.getId());
                                     ps.setString(i++, subDetail.getProductName());
