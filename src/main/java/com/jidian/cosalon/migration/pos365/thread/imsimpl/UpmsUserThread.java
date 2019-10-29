@@ -4,15 +4,16 @@ import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
-import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.util.List;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.util.List;
+import java.util.Objects;
 
 @Component("upmsUserThread")
 public class UpmsUserThread extends MyThread {
@@ -23,6 +24,8 @@ public class UpmsUserThread extends MyThread {
     private int insertedFromPartnerTotal = 0;
     private int assumptionInsertFromPartner = 0;
     private int insertedToAms = 0;
+    private long startUserId = 123L;
+    private long startAccountId = 169L;
 
     @Override
     public String getName() {
@@ -83,48 +86,51 @@ public class UpmsUserThread extends MyThread {
                         return result;
                     });
             assumptionInsertFromPartner = partners.size();
-            partners.forEach(p365User -> {
+            for (int i = 0; i < partners.size(); i++) {
+                Pos365Partner p365User = partners.get(i);
                 KeyHolder keyHolder = new GeneratedKeyHolder();
+                int finalI = i;
                 insertedFromPartnerTotal += upmsJdbcTemplate.update(
-                    connection -> {
-                        PreparedStatement ps = connection
-                            .prepareStatement(" insert into upms_user  "
-                                    + " (gmt_create, gmt_modified, version, avatar, email, ext1, ext2, "
-                                    + " ext3, is_locked, nickname, password, phone_num, is_sys_built_in, "
-                                    + " username) values (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, null, "
-                                    + " null, null, null, null, 0, ?, null, ?, 0, ?)",
-                                new String[]{"id"});
-                        int index = 1;
-                        ps.setString(index++, p365User.getName());
-                        ps.setString(index++, p365User.getPhone() == null ? Utils
-                            .genP365PhoneNumber(p365User.getId().toString())
-                            : Utils.genP365PhoneNumber(p365User.getPhone()));
-                        ps.setString(index, p365User.getCode());
-                        return ps;
-                    },
-                    keyHolder
+                        connection -> {
+                            PreparedStatement ps = connection
+                                    .prepareStatement(" insert into upms_user  "
+                                                    + " (id, gmt_create, gmt_modified, version, avatar, email, ext1, ext2, "
+                                                    + " ext3, is_locked, nickname, password, phone_num, is_sys_built_in, "
+                                                    + " username) values (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, null, "
+                                                    + " null, null, null, null, 0, ?, null, ?, 0, ?)",
+                                            new String[]{"id"});
+                            int index = 1;
+                            ps.setLong(index++, finalI + startUserId);
+                            ps.setString(index++, p365User.getName());
+                            ps.setString(index++, p365User.getPhone() == null ? Utils
+                                    .genP365PhoneNumber(p365User.getId().toString())
+                                    : Utils.genP365PhoneNumber(p365User.getPhone()));
+                            ps.setString(index, p365User.getCode());
+                            return ps;
+                        },
+                        keyHolder
                 );
 
                 insertedToAms += amsJdbcTemplate.update(
-                    connection -> {
-                        PreparedStatement ps = connection
-                            .prepareStatement("insert into cosalon_ams.ams_account "
-                                    + " (gmt_create, gmt_modified, version, account_name, account_status,"
-                                    + " account_type, balance, today_expend, today_income, total_expend, "
-                                    + " total_income, unbalance, user_id, username) "
-                                    + " values (current_timestamp, current_timestamp, 0, null, 1, 1, ?, 0, "
-                                    + " 0, 0, 0, 0, ?, ?)",
-                                new String[]{"id"});
-                        int index = 1;
-                        ps.setBigDecimal(index++, p365User.getTotalDebt().compareTo(
-                            BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
-                            : BigDecimal.valueOf(0));
-                        ps.setLong(index++, Objects.requireNonNull(keyHolder.getKey()).longValue());
-                        ps.setString(index, p365User.getCode());
-                        return ps;
-                    });
-            });
-
+                        connection -> {
+                            PreparedStatement ps = connection
+                                    .prepareStatement("insert into cosalon_ams.ams_account "
+                                                    + " (id, gmt_create, gmt_modified, version, account_name, account_status,"
+                                                    + " account_type, balance, today_expend, today_income, total_expend, "
+                                                    + " total_income, unbalance, user_id, username) "
+                                                    + " values (?, current_timestamp, current_timestamp, 0, null, 1, 1, ?, 0, "
+                                                    + " 0, 0, 0, 0, ?, ?)",
+                                            new String[]{"id"});
+                            int index = 1;
+                            ps.setLong(index++, finalI + startAccountId);
+                            ps.setBigDecimal(index++, p365User.getTotalDebt().compareTo(
+                                    BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
+                                    : BigDecimal.valueOf(0));
+                            ps.setLong(index++, Objects.requireNonNull(keyHolder.getKey()).longValue());
+                            ps.setString(index, p365User.getCode());
+                            return ps;
+                        });
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {

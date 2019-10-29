@@ -17,10 +17,14 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +41,8 @@ public class ImsRetailGoodsReceiptThread extends MyThread {
 
     private int insertedTotal = 0;
     private int assumptionTotal = 0;
+    private List<String> servicePrefixes = Arrays.asList("HD", "OFFLINE", "VD");
+    private List<String> retailPrefixes = Arrays.asList("HA", "KT", "VH");
 
     @Override
     public void doRun() {
@@ -171,8 +177,28 @@ public class ImsRetailGoodsReceiptThread extends MyThread {
                 }
             });
 
+            PrintWriter fileWriter = new PrintWriter("/Users/haimt/Desktop/" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".txt", "UTF-8");
             inserts.forEach(item -> {
+                int type = 0;
+                for (String prefix : servicePrefixes) {
+                    if (Utils.nvl(item.getCode()).trim().startsWith(prefix)) {
+                        type = 3;
+                        break;
+                    }
+                }
+                for (String prefix : retailPrefixes) {
+                    if (Utils.nvl(item.getCode()).trim().startsWith(prefix)) {
+                        type = 5;
+                        break;
+                    }
+                }
+                if (type == 0) {
+                    fileWriter.println(Utils.nvl(item.getCode()).trim());
+                    return;
+                }
+
                 KeyHolder keyHolder = new GeneratedKeyHolder();
+                int finalType = type;
                 insertedTotal += jdbcTemplate.update(
                         connection -> {
                             PreparedStatement ps = connection.prepareStatement(
@@ -180,12 +206,13 @@ public class ImsRetailGoodsReceiptThread extends MyThread {
                                             "    supplier_id, gmt_delivery, gmt_import, gmt_export, source_warehouse_id, dest_warehouse_id, " +
                                             "    total_quantity, total_pre_amount, deduction, total_amount, creator_id, editor_id, finisher_id, " +
                                             "    requester_id, requester_type, requester_name, requester_phone_num, order_num, reference, remark, status) " +
-                                            "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,5,1,?, " +
+                                            "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?,1,?, " +
                                             "    null,null,null,?,null,?, " +
                                             "    0,?,?,?,1,null,null, " +
                                             "    null,6,?,?,?,null,null,?) ",
                                     new String[] {"id"});
                             int i = 1;
+                            ps.setInt(i++, finalType);
                             ps.setString(i++, Utils.nvl(item.getCode()).trim());
                             ps.setTimestamp(i++, Utils.convertTimestamp(item.getPurchaseDate()));
                             ps.setLong(i++, branchWarehouseMap.get(item.getBranchId()));
@@ -258,12 +285,13 @@ public class ImsRetailGoodsReceiptThread extends MyThread {
 
                 }
             });
+            fileWriter.close();
 
             updates.forEach(item -> {
                 insertedTotal += jdbcTemplate.update(
                         connection -> {
                             PreparedStatement ps = connection.prepareStatement(
-                                    "UPDATE ims_goods_receipt SET gmt_modified = CURRENT_TIMESTAMP(), version = version+1, type = 4, " +
+                                    "UPDATE ims_goods_receipt SET gmt_modified = CURRENT_TIMESTAMP(), version = version+1, type = type, " +
                                             "    import_export = 1, receipt_code = ?, supplier_id = null, gmt_delivery = null, gmt_import = null, gmt_export = ?, " +
                                             "    source_warehouse_id = null, dest_warehouse_id = ?, total_quantity = 0, total_pre_amount = ?, deduction = ?, total_amount = ?, " +
                                             "    creator_id = 1, editor_id = null, finisher_id = null, requester_id = null, requester_type = 6, requester_name = ?, requester_phone_num = ?, " +

@@ -141,6 +141,8 @@ logging:
         jdbc:
           core:
             JdbcTemplate: trace
+    okhttp3:
+      OkHttpClient: error
   com:
     jidian:
       cosalon:
