@@ -74,6 +74,7 @@ public class ProductHistoryThread extends MyThread {
 //                                    jdbcTemplate.execute("COMMIT");
                                     insertedTotal += response.getResults().size();
                                 }
+                                LOGGER.info("fetching insertedTotal p365_products_history size :" + insertedTotal);
                             } while (count > 0);
                         } catch (IOException e) {
                             LOGGER.error(e.getMessage(), e);
