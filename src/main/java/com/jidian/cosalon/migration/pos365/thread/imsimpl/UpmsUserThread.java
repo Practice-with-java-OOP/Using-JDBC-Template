@@ -4,15 +4,16 @@ import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
-import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.util.List;
 
 @Component("upmsUserThread")
 public class UpmsUserThread extends MyThread {
@@ -24,7 +25,7 @@ public class UpmsUserThread extends MyThread {
     private int assumptionInsertFromPartner = 0;
     private int insertedToAms = 0;
     private long startUserId = 123L;
-    private long startAccountId = 236L;
+    private long startAccountId = 281L;
 
     @Override
     public String getName() {
@@ -152,7 +153,7 @@ public class UpmsUserThread extends MyThread {
                             ps.setBigDecimal(index++, p365User.getTotalDebt().compareTo(
                                 BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
                                 : BigDecimal.valueOf(0));
-                            ps.setLong(index++, counter2 + startAccountId);
+                            ps.setLong(index++, counter + startUserId);
                             ps.setString(index++, p365User.getCode());
                             ps.setBigDecimal(index, p365User.getTotalDebt().compareTo(
                                 BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
