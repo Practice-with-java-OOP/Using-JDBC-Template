@@ -283,8 +283,8 @@ public class TaskService {
             }
         });
         taskExecutor.execute(imsCustomerSuggestionThread);
-        taskExecutor.execute(upmsUserThread);
         taskExecutor.execute(bhairStylistThread);
+        taskExecutor.execute(upmsUserThread);
         return true;
     }
 }
