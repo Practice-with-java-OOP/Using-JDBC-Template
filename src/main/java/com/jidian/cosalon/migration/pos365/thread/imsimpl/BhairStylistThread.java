@@ -31,7 +31,8 @@ public class BhairStylistThread extends MyThread {
     public void doRun() {
         try {
             final List<Pos365Partner> stylists = jdbcTemplate.query("select * from p365_partners "
-                    + " where lower(name) like '%h01c%' or lower(name) like '%h02s%' or lower(name) like '%h03s0%'",
+                    + " where lower(name) like '%h01c%' or lower(name) like '%h02s%' "
+                    + " or lower(name) like '%h03s0%' or lower(name) like '%h03na%'",
                 (rs, rowNum) -> {
                     final Pos365Partner result = new Pos365Partner();
                     result.setId(rs.getLong("id"));

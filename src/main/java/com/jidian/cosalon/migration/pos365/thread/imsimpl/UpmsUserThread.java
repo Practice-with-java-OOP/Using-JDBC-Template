@@ -128,8 +128,7 @@ public class UpmsUserThread extends MyThread {
                             ps.setString(index++, p365User.getPhone() == null ? Utils
                                 .genP365PhoneNumber(p365User.getId().toString())
                                 : Utils.genP365PhoneNumber(p365User.getPhone()));
-                            ps.setString(index,
-                                Utils.genP365PhoneNumber(p365User.getId().toString()));
+                            ps.setString(index, p365User.getCode());
                             return ps;
                         },
                         keyHolder
@@ -142,13 +141,14 @@ public class UpmsUserThread extends MyThread {
                                         + "(id, gmt_create, gmt_modified, version, account_name, account_status, "
                                         + " account_type, balance, today_expend, today_income, total_expend, "
                                         + " total_income, unbalance, user_id, username) "
-                                        + " values (?, current_timestamp, current_timestamp, 0, null, 1,"
+                                        + " values (?, current_timestamp, current_timestamp, 0, ?, 1,"
                                         + " 1, ?, 0, 0, 0, 0, 0, ?, ?) "
                                         + " on duplicate key update gmt_modified = current_timestamp, "
                                         + " version = version + 1, balance = ?",
                                     new String[]{"id"});
                             int index = 1;
                             ps.setLong(index++, counter2 + startAccountId);
+                            ps.setString(index++, p365User.getName());
                             ps.setBigDecimal(index++, p365User.getTotalDebt().compareTo(
                                 BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
                                 : BigDecimal.valueOf(0));
