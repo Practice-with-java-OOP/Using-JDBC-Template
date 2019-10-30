@@ -206,7 +206,7 @@ public class ImsRetailGoodsReceiptThread extends MyThread {
                                             "    supplier_id, gmt_delivery, gmt_import, gmt_export, source_warehouse_id, dest_warehouse_id, " +
                                             "    total_quantity, total_pre_amount, deduction, total_amount, creator_id, editor_id, finisher_id, " +
                                             "    requester_id, requester_type, requester_name, requester_phone_num, order_num, reference, remark, status) " +
-                                            "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?,1,?, " +
+                                            "VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?,2,?, " +
                                             "    null,null,null,?,null,?, " +
                                             "    0,?,?,?,1,null,null, " +
                                             "    null,6,?,?,?,null,null,?) ",
