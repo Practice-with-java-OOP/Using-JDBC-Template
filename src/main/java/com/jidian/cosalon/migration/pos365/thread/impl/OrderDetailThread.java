@@ -63,6 +63,7 @@ public class OrderDetailThread extends MyThread {
 //                                });
 //                                jdbcTemplate.execute("COMMIT");
                                 insertedTotal += response.getResults().size();
+                                LOGGER.debug("fetching insertedTotal p365_order_detail size :" + insertedTotal);
                             }
                         } while (count > 0);
                     } catch (IOException e) {
