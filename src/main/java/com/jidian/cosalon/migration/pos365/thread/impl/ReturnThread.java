@@ -58,13 +58,13 @@ public class ReturnThread extends MyThread {
                             ps.setString(5, categories.getCreatedDate());
                             ps.setString(6, categories.getDescription());
                             ps.setBigDecimal(7, categories.getDiscount() == null ? BigDecimal.ZERO : categories.getDiscount());
-                            ps.setLong(8, categories.getModifiedBy() == null ? 0 : categories.getBranchId());
+                            ps.setLong(8, categories.getModifiedBy() == null ? 0 : categories.getModifiedBy());
                             ps.setString(9, categories.getModifiedDate());
-                            ps.setLong(10, categories.getRetailerId() == null ? 0 : categories.getBranchId());
-                            ps.setLong(11, categories.getOrderId() == null ? 0 : categories.getBranchId());
+                            ps.setLong(10, categories.getRetailerId() == null ? 0 : categories.getRetailerId());
+                            ps.setLong(11, categories.getOrderId() == null ? 0 : categories.getOrderId());
                             ps.setString(12, categories.getReturnDate());
-                            ps.setLong(13, categories.getPartnerId() == null ? 0 : categories.getBranchId());
-                            ps.setLong(14, categories.getStatus() == null ? 0 : categories.getBranchId());
+                            ps.setLong(13, categories.getPartnerId() == null ? 0 : categories.getPartnerId());
+                            ps.setLong(14, categories.getStatus() == null ? 0 : categories.getStatus());
                             ps.setBigDecimal(15, categories.getTotal() == null ? BigDecimal.ZERO : categories.getTotal());
                             ps.setBigDecimal(16, categories.getTotalPayment() == null ? BigDecimal.ZERO : categories.getTotalPayment());
                         }
