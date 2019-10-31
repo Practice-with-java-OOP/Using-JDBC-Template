@@ -54,9 +54,10 @@ public class Utils {
     }
 
     public enum StatusEnum {
-        EXECUTING(1, 10),
-        FINISHED(2, 40),
-        CANCELED(3, 30);
+        EXECUTING(1, 20),
+        WAITING_TO_CONFIRM(2, 10),
+        FINISHED(3, 30),
+        CANCELLED(4, 40);
 
         @Getter
         private final int value;
