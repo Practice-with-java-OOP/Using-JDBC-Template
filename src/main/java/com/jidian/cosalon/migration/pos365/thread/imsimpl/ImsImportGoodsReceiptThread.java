@@ -197,7 +197,6 @@ public class ImsImportGoodsReceiptThread extends MyThread {
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()));
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal()).intValue() == 0 ? BigDecimal.ZERO : Utils.nvl(item.getDiscount()).divide(item.getTotal(), 2, RoundingMode.HALF_UP));
                             ps.setBigDecimal(i++, Utils.nvl(item.getTotal().subtract(Utils.nvl(item.getDiscount()))));
-                            ps.setString(i++, Utils.nvl(item.getOrderCode()));
                             ps.setLong(i++, StatusEnum.resolve(Utils.nvl(item.getStatus())) == null ? 10: StatusEnum.resolve(Utils.nvl(item.getStatus())).getGoodsReceiptStatus());
                             ps.setLong(i++, item.getImsGoodsReceiptId());
                             return ps;
