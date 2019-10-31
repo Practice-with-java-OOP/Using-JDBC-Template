@@ -267,13 +267,12 @@ public class TaskService {
 
                 taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
                 final Future futureImport = taskExecutor.submit(imsImportGoodsReceiptThread);
-                final Future futureTransfer = taskExecutor.submit(imsTransferGoodsReceiptThread);
-                final Future futureReturn = taskExecutor.submit(imsReturnGoodsReceiptThread);
-                final Future futureRetail = taskExecutor.submit(imsRetailGoodsReceiptThread);
-
                 futureImport.get();
+                final Future futureTransfer = taskExecutor.submit(imsTransferGoodsReceiptThread);
                 futureTransfer.get();
+                final Future futureReturn = taskExecutor.submit(imsReturnGoodsReceiptThread);
                 futureReturn.get();
+                final Future futureRetail = taskExecutor.submit(imsRetailGoodsReceiptThread);
                 futureRetail.get();
 
                 final Future futureOrder = taskExecutor.submit(omsOrderThread);
