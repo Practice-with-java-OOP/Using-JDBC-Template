@@ -258,7 +258,7 @@ public class ImsImportGoodsReceiptThread extends MyThread {
     }
 
     private enum StatusEnum {
-        EXECUTING(1, 10),
+        EXECUTING(1, 20),
         FINISHED(2, 40),
         CANCELED(3, 30)
         ;

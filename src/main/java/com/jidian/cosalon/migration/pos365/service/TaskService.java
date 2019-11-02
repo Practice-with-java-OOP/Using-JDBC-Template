@@ -281,7 +281,8 @@ public class TaskService {
                 LOGGER.error(e.getMessage(), e);
             }
         });
-        taskExecutor.execute(imsCustomerSuggestionThread);
+        // use sql insert instead
+//        taskExecutor.execute(imsCustomerSuggestionThread);
         taskExecutor.execute(bhairStylistThread);
         taskExecutor.execute(upmsUserThread);
         return true;
