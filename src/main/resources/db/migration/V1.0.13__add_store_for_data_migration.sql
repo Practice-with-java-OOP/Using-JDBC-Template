@@ -1,0 +1,3 @@
+INSERT INTO cosalon_bhair.bhair_store
+(gmt_create, gmt_modified, version, address, avatar, brand_name, city_code, city_name, district_name, cumulative_order_quantity, cumulative_turnover, exhibition_image_urls, introduction, lat, lng, monthly_order_quantity, monthly_turnover, name, nursing_staff_quantity, status, stylist_quantity, telephone, type_code)
+VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 0, NULL, NULL, 'POS365 Branch', NULL, NULL, NULL, 0, 0.00, NULL, NULL, 0, 0, 0, 0.00, 'POS365 Branch', 0, 2, 0, '00000000000', 1);
