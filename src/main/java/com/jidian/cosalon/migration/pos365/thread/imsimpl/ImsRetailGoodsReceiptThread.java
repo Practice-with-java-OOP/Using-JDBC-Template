@@ -177,7 +177,7 @@ public class ImsRetailGoodsReceiptThread extends MyThread {
                 }
             });
 
-            PrintWriter fileWriter = new PrintWriter("/Users/haimt/Desktop/" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".txt", "UTF-8");
+            PrintWriter fileWriter = new PrintWriter("/Users/syphan/Desktop/" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".txt", "UTF-8");
             inserts.forEach(item -> {
                 int type = 0;
                 for (String prefix : servicePrefixes) {

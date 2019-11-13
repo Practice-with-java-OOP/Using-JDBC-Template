@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/cosalon_ims?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
-    password: cosalon.vn
+    password: root123456
 
   jpa:
     open-in-view: true
@@ -30,7 +30,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/cosalon_oms?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
-    password: cosalon.vn
+    password: root123456
 
   jpa2:
     open-in-view: true
@@ -54,7 +54,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/cosalon_upms?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
-    password: cosalon.vn
+    password: root123456
 
   jpa3:
     open-in-view: true
@@ -78,7 +78,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/cosalon_bhair?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
-    password: cosalon.vn
+    password: root123456
 
   jpa4:
     open-in-view: true
@@ -103,7 +103,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/cosalon_bhair?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
-    password: cosalon.vn
+    password: root123456
 
   jpa5:
     open-in-view: true

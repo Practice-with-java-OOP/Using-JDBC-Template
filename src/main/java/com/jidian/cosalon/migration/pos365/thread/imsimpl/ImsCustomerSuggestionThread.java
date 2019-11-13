@@ -47,12 +47,11 @@ public class ImsCustomerSuggestionThread extends MyThread {
                     connection -> {
                         PreparedStatement ps = connection.prepareStatement(
                             "INSERT INTO ims_customer_suggestion (gmt_create, gmt_modified, "
-                                + " version, customer_name, phone_number, is_system_user, "
-                                + " is_stylist, is_non_resident_customer) "
-                                + " VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?,?,1,0,0) "
+                                + " version, customer_name, phone_number, type) "
+                                + " VALUES (CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),0,?,?,1) "
                                 + " ON DUPLICATE KEY UPDATE gmt_modified = CURRENT_TIMESTAMP(), "
                                 + " version = version + 1, customer_name = ?, phone_number = ?, "
-                                + " is_system_user = 1, is_stylist = 0, is_non_resident_customer = 0 ",
+                                + " type = 1",
                             new String[]{"id"});
                         int index = 1;
                         ps.setString(index++, customer.getName());

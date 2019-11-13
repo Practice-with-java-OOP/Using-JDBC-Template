@@ -282,7 +282,7 @@ public class TaskService {
             }
         });
         // use sql insert instead
-//        taskExecutor.execute(imsCustomerSuggestionThread);
+        taskExecutor.execute(imsCustomerSuggestionThread);
         taskExecutor.execute(bhairStylistThread);
         taskExecutor.execute(upmsUserThread);
         return true;
