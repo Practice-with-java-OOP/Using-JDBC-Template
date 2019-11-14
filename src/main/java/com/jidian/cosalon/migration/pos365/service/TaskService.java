@@ -256,34 +256,34 @@ public class TaskService {
     public Boolean createMigrationTask() throws Exception {
         taskExecutor.execute(() -> {
             try {
-//                LOGGER.debug("Executing Product Migration");
-//                final Future futureWarehouse = taskExecutor.submit(imsWarehouseThread);
-//                final Future futureChemical = taskExecutor.submit(imsChemicalThread);
-//                final Future futureSupplier = taskExecutor.submit(imsSupplierThread);
-//
-//                futureWarehouse.get();
-//                futureChemical.get();
-//                futureSupplier.get();
-//
-//                taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
-//                final Future futureImport = taskExecutor.submit(imsImportGoodsReceiptThread);
-//                futureImport.get();
-//                final Future futureTransfer = taskExecutor.submit(imsTransferGoodsReceiptThread);
-//                futureTransfer.get();
-//                final Future futureReturn = taskExecutor.submit(imsReturnGoodsReceiptThread);
-//                futureReturn.get();
-//                final Future futureRetail = taskExecutor.submit(imsRetailGoodsReceiptThread);
-//                futureRetail.get();
-//
-//                final Future futureOrder = taskExecutor.submit(omsOrderThread);
-//                futureOrder.get();
+                LOGGER.debug("Executing Product Migration");
+                final Future futureWarehouse = taskExecutor.submit(imsWarehouseThread);
+                final Future futureChemical = taskExecutor.submit(imsChemicalThread);
+                final Future futureSupplier = taskExecutor.submit(imsSupplierThread);
+
+                futureWarehouse.get();
+                futureChemical.get();
+                futureSupplier.get();
+
+                taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
+                final Future futureImport = taskExecutor.submit(imsImportGoodsReceiptThread);
+                futureImport.get();
+                final Future futureTransfer = taskExecutor.submit(imsTransferGoodsReceiptThread);
+                futureTransfer.get();
+                final Future futureReturn = taskExecutor.submit(imsReturnGoodsReceiptThread);
+                futureReturn.get();
+                final Future futureRetail = taskExecutor.submit(imsRetailGoodsReceiptThread);
+                futureRetail.get();
+
+                final Future futureOrder = taskExecutor.submit(omsOrderThread);
+                futureOrder.get();
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         });
         // use sql insert instead
-//        taskExecutor.execute(imsCustomerSuggestionThread);
-//        taskExecutor.execute(bhairStylistThread);
+        taskExecutor.execute(imsCustomerSuggestionThread);
+        taskExecutor.execute(bhairStylistThread);
         taskExecutor.execute(upmsUserThread);
         return true;
     }

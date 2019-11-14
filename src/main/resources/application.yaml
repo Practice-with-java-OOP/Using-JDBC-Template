@@ -4,7 +4,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/cosalon_ims?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/cosalon_ims?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
     password: root123456
 
@@ -28,7 +28,7 @@ spring:
 
   datasource2:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/cosalon_oms?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/cosalon_oms?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
     password: root123456
 
@@ -52,7 +52,7 @@ spring:
 
   datasource3:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/cosalon_upms?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/cosalon_upms?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
     password: root123456
 
@@ -76,7 +76,7 @@ spring:
 
   datasource4:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/cosalon_bhair?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/cosalon_bhair?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
     password: root123456
 
@@ -101,7 +101,7 @@ spring:
   datasource5:
 
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/cosalon_bhair?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/cosalon_bhair?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&useSSL=false
     username: root
     password: root123456
 

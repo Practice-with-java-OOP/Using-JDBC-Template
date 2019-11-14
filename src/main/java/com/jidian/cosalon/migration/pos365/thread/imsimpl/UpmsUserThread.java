@@ -175,7 +175,7 @@ public class UpmsUserThread extends MyThread {
                             (rs, rowNum) -> {
                                 final UserRole result = new UserRole();
                                 result.setUserId(rs.getLong("id"));
-                                result.setRoleId(1L);
+                                result.setRoleId(2L);
                                 return result;
                             });
 
