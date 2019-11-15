@@ -18,6 +18,7 @@ import retrofit2.Retrofit;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @Service
@@ -281,10 +282,16 @@ public class TaskService {
                 LOGGER.error(e.getMessage(), e);
             }
         });
-        // use sql insert instead
-        taskExecutor.execute(upmsUserThread);
-//        taskExecutor.execute(bhairStylistThread);
-        taskExecutor.execute(imsCustomerSuggestionThread);
+
+        taskExecutor.execute(() -> {
+            try {
+                final Future futureUser = taskExecutor.submit(upmsUserThread);
+                futureUser.get();
+                taskExecutor.execute(imsCustomerSuggestionThread);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
         return true;
     }
 }
