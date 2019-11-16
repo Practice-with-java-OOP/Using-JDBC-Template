@@ -97,4 +97,8 @@ public class Utils {
         return "p365_user_" + info;
     }
 
+    public static String convertPhoneNumber(String phoneNumber) {
+        return phoneNumber.replaceAll(" ", "");
+    }
+
 }

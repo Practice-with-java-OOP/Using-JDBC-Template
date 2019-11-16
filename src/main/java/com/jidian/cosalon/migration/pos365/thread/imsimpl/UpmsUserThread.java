@@ -1,6 +1,7 @@
 package com.jidian.cosalon.migration.pos365.thread.imsimpl;
 
 import com.jidian.cosalon.migration.pos365.Utils;
+import com.jidian.cosalon.migration.pos365.domain.UpmsUser;
 import com.jidian.cosalon.migration.pos365.domain.UserRole;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365User;
@@ -17,7 +18,9 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Component("upmsUserThread")
@@ -97,7 +100,8 @@ public class UpmsUserThread extends MyThread {
                                 result.setId(rs.getLong("id"));
                                 result.setCode(rs.getString("code"));
                                 result.setName(rs.getString("name"));
-                                result.setPhone(rs.getString("phone"));
+                                result.setPhone(rs.getString("phone") == null
+                                        ? rs.getString("phone") : Utils.convertPhoneNumber(rs.getString("phone")));
                                 result.setDebt(rs.getBigDecimal("debt"));
                                 result.setCreatedDate(rs.getString("created_date"));
                                 result.setModifiedDate(rs.getString("modified_date"));
@@ -120,7 +124,7 @@ public class UpmsUserThread extends MyThread {
                                                         + " username) values (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 100, null, "
                                                         + " null, null, null, null, 0, ?, ?, ?, 0, ?)"
                                                         + " on duplicate key update gmt_modified = current_timestamp,"
-                                                        + " version = version + 1, nickname = ?,phone_num = ?, username = ?",
+                                                        + " version = version + 1, nickname = ?,phone_num = ?",
                                                 new String[]{"id"});
                                 int index = 1;
                                 ps.setLong(index++, counter + startUserId);
@@ -131,10 +135,9 @@ public class UpmsUserThread extends MyThread {
                                         : p365User.getPhone());
                                 ps.setString(index++, p365User.getCode());
                                 ps.setString(index++, p365User.getName());
-                                ps.setString(index++, p365User.getPhone() == null ? Utils
+                                ps.setString(index, p365User.getPhone() == null ? Utils
                                         .genP365PhoneNumber(p365User.getId().toString())
                                         : p365User.getPhone());
-                                ps.setString(index, p365User.getCode());
                                 return ps;
                             },
                             keyHolder
@@ -156,12 +159,12 @@ public class UpmsUserThread extends MyThread {
                                 ps.setString(index++, p365User.getName());
                                 ps.setBigDecimal(index++, p365User.getTotalDebt().compareTo(
                                         BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
-                                        : BigDecimal.valueOf(0));
+                                        : p365User.getTotalDebt());
                                 ps.setLong(index++, counter + startUserId);
                                 ps.setString(index++, p365User.getCode());
                                 ps.setBigDecimal(index, p365User.getTotalDebt().compareTo(
                                         BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
-                                        : BigDecimal.valueOf(0));
+                                        : p365User.getTotalDebt());
                                 return ps;
                             });
                     counter++;
@@ -184,11 +187,13 @@ public class UpmsUserThread extends MyThread {
                     "    upms_user_role " +
                     "    (user_id, role_id)  " +
                     "  VALUES " +
-                    "    (?,?)", new BatchPreparedStatementSetter() {
+                    "    (?,?) on duplicate key update user_id = ?, role_id = ?", new BatchPreparedStatementSetter() {
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     ps.setLong(1, userRoles.get(i).getUserId());
                     ps.setLong(2, userRoles.get(i).getRoleId());
+                    ps.setLong(3, userRoles.get(i).getUserId());
+                    ps.setLong(4, userRoles.get(i).getRoleId());
                 }
 
                 @Override
