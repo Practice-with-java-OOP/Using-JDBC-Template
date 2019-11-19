@@ -6,6 +6,7 @@ import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +38,7 @@ public class PartnerThread extends MyThread {
             try {
                 do {
                     BaseResponse<Pos365Partner> response = pos365RetrofitService
-                        .listPartner(getMapHeaders2(), top, skip, type).execute().body();
+                        .listPartner(getMapHeaders2(), top, skip, type, Timestamp.valueOf("2018-11-24 06:56:45"), new Timestamp(System.currentTimeMillis())).execute().body();
                     if (response != null) {
                         skip += top;
                         assumptionTotal = response.getCount();
@@ -78,7 +79,7 @@ public class PartnerThread extends MyThread {
                                         : categories.getLoyalty());
                                     ps.setString(index++, categories.getModifiedDate());
                                     ps.setString(index++, categories.getName());
-                                    ps.setString(index++, categories.getPhone());
+                                    ps.setString(index++, categories.getPhone() == null ? categories.getCode() : categories.getPhone());
                                     ps.setInt(index++,
                                         categories.getPoint() == null ? 0 : categories.getPoint());
                                     ps.setLong(index++, categories.getRetailerId() == null ? 0
