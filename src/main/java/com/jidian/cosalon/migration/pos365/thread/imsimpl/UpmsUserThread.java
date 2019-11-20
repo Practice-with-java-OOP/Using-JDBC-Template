@@ -2,6 +2,7 @@ package com.jidian.cosalon.migration.pos365.thread.imsimpl;
 
 import com.jidian.cosalon.migration.pos365.domain.AmsAccount;
 import com.jidian.cosalon.migration.pos365.domain.User;
+import com.jidian.cosalon.migration.pos365.domain.UserRole;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
 import org.slf4j.Logger;
@@ -85,9 +86,9 @@ public class UpmsUserThread extends MyThread {
             partnersWithOneAccounts.forEach(partner -> {
                 if (userExistMap.containsKey(partner.getPhone())) {
                     User user = userExistMap.get(partner.getPhone());
-                    userUpdates.add(new User(user.getId(), user.getVersion() + 1, user.getPhoneNum(), user.getPhoneNum(), String.format("%s_%s", user.getNickName(), partner.getCode())));
+                    userUpdates.add(new User(user.getId(), user.getVersion() + 1, user.getPhoneNum(), user.getPhoneNum(), String.format("%s_%s", partner.getName(), partner.getCode())));
                 } else {
-                    userCreates.add(new User(startUserId.get(), 0, partner.getPhone(), partner.getPhone(), partner.getName()));
+                    userCreates.add(new User(startUserId.get(), 100, partner.getPhone(), partner.getPhone(), String.format("%s_%s", partner.getName(), partner.getCode())));
                     startUserId.getAndIncrement();
                 }
             });
@@ -117,9 +118,12 @@ public class UpmsUserThread extends MyThread {
                     AmsAccount amsAccount = amsAccountMap.get(user.getId());
                     amsAccount.setBalance(pos365PartnerMap.get(user.getPhoneNum()).getTotalDebt());
                     amsAccount.setUsername(user.getUsername());
+                    amsAccount.setAccountName(String.format("%s_%s",
+                            pos365PartnerMap.get(user.getPhoneNum()).getName(), pos365PartnerMap.get(user.getPhoneNum()).getCode()));
                     amsAccountUpdates.add(amsAccount);
                 } else {
-                    amsAccountCreates.add(new AmsAccount(1L, 0, pos365PartnerMap.get(user.getPhoneNum()).getName(), 1, 1,
+                    amsAccountCreates.add(new AmsAccount(1L, 0,
+                            String.format("%s_%s", pos365PartnerMap.get(user.getPhoneNum()).getName(), pos365PartnerMap.get(user.getPhoneNum()).getCode()), 1, 1,
                             pos365PartnerMap.get(user.getPhoneNum()).getTotalDebt(), user.getId(), user.getUsername()));
                 }
             });
@@ -205,95 +209,6 @@ public class UpmsUserThread extends MyThread {
                 }
             });
 
-
-//            final List<User> users = upmsJdbcTemplate.query("select * from upms_user",
-//                    (rs, rowNum) -> {
-//                        final User result = new User();
-//                        result.setPhone(rs.getString("phone_num"));
-//                        result.setUsername(rs.getString("username"));
-//                        return result;
-//                    });
-//
-//            final Set<String> phones = new HashSet<>();
-//            partners.forEach(phone -> {
-//                if (phone.getPhone() != null) {
-//                    phones.add(phone.getPhone());
-//                }
-//            });
-//
-//            Set<String> phoentrung = new HashSet<>();
-//
-//            users.forEach(user -> {
-//                phones.forEach(phone1 -> {
-//                    if (phone1.equals(user.getPhone()) || phone1.equals(user.getUsername())) {
-//                        phoentrung.add(phone1);
-//                    }
-//                });
-//            });
-//
-//            System.out.println(phoentrung.toString());
-
-
-            /*partners.forEach(p365User -> {
-                try {
-                    KeyHolder keyHolder = new GeneratedKeyHolder();
-                    insertedFromPartnerTotal += upmsJdbcTemplate.update(
-                            connection -> {
-                                PreparedStatement ps = connection
-                                        .prepareStatement(" insert into upms_user  "
-                                                        + " (id, gmt_create, gmt_modified, version, avatar, email, ext1, ext2, "
-                                                        + " ext3, is_locked, nickname, password, phone_num, is_sys_built_in, "
-                                                        + " username) values (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 100, null, "
-                                                        + " null, null, null, null, 0, ?, ?, ?, 0, ?)"
-                                                        + " on duplicate key update gmt_modified = current_timestamp,"
-                                                        + " version = version + 1, phone_num = ?",
-                                                new String[]{"id"});
-                                int index = 1;
-                                ps.setLong(index++, counter + startUserId);
-                                ps.setString(index++, p365User.getName());
-                                ps.setString(index++, UUID.randomUUID().toString());
-                                ps.setString(index++, p365User.getPhone() == null ? Utils
-                                        .genP365PhoneNumber(p365User.getId().toString())
-                                        : p365User.getPhone());
-                                ps.setString(index++, p365User.getCode());
-                                ps.setString(index, p365User.getPhone() == null ? Utils
-                                        .genP365PhoneNumber(p365User.getId().toString())
-                                        : p365User.getPhone());
-                                return ps;
-                            },
-                            keyHolder
-                    );
-
-                    insertedToAms += amsJdbcTemplate.update(
-                            connection -> {
-                                PreparedStatement ps = connection
-                                        .prepareStatement("insert into cosalon_ams.ams_account "
-                                                        + "(gmt_create, gmt_modified, version, account_name, account_status, "
-                                                        + " account_type, balance, today_expend, today_income, total_expend, "
-                                                        + " total_income, unbalance, user_id, username) "
-                                                        + " values (current_timestamp, current_timestamp, 0, ?, 1,"
-                                                        + " 1, ?, 0, 0, 0, 0, 0, ?, ?) "
-                                                        + " on duplicate key update gmt_modified = current_timestamp, "
-                                                        + " version = version + 1, balance = ?",
-                                                new String[]{"id"});
-                                int index = 1;
-                                ps.setString(index++, p365User.getName());
-                                ps.setBigDecimal(index++, p365User.getTotalDebt().compareTo(
-                                        BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
-                                        : p365User.getTotalDebt());
-                                ps.setLong(index++, counter + startUserId);
-                                ps.setString(index++, p365User.getCode());
-                                ps.setBigDecimal(index, p365User.getTotalDebt().compareTo(
-                                        BigDecimal.valueOf(0)) < 1 ? p365User.getTotalDebt().negate()
-                                        : p365User.getTotalDebt());
-                                return ps;
-                            });
-                    counter++;
-                } catch (DataAccessException e) {
-                    e.printStackTrace();
-                }
-            });
-
             final List<UserRole> userRoles = upmsJdbcTemplate.query(
                     "select * from upms_user where version = 100",
                     (rs, rowNum) -> {
@@ -322,7 +237,7 @@ public class UpmsUserThread extends MyThread {
                     return userRoles.size();
                 }
             });
-            userRoles.clear();*/
+            userRoles.clear();
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
