@@ -186,66 +186,66 @@ public class TaskService {
                 Utils.SESSION_ID, Utils.PID);
         }
 
-        taskExecutor.execute(userThread);
-        taskExecutor.execute(categoryThread);
-        taskExecutor.execute(itemsThread);
+//        taskExecutor.execute(userThread);
+//        taskExecutor.execute(categoryThread);
+//        taskExecutor.execute(itemsThread);
         taskExecutor.execute(partnerThread);
-        taskExecutor.execute(productOnHandByBranchThread);
-
-        taskExecutor.execute(() -> {
-            try {
-                final Future futureBranch = taskExecutor.submit(branchThread);
-                final Future futureProduct = taskExecutor.submit(productThread);
-                futureBranch.get();
-                futureProduct.get();
-
-                taskExecutor.execute(productHistoryThread);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
-        taskExecutor.execute(() -> {
-            try {
-                LOGGER.info("Executing Order Stock Thread");
-                final Future futureOrderStock = taskExecutor.submit(orderStockThread);
-                futureOrderStock.get();
-                taskExecutor.execute(orderStockDetailThread);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
-        taskExecutor.execute(() -> {
-            try {
-                LOGGER.info("Executing Return Thread");
-                final Future futureReturn = taskExecutor.submit(returnThread);
-                futureReturn.get();
-                taskExecutor.execute(returnDetailThread);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
-        taskExecutor.execute(() -> {
-            try {
-                LOGGER.info("Executing Order Thread");
-                final Future futureOrder = taskExecutor.submit(orderThread);
-                futureOrder.get();
-                taskExecutor.execute(orderDetailThread);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
-
-        taskExecutor.execute(() -> {
-            try {
-                LOGGER.info("Executing Transfer Thread");
-                final Future futureTransfer = taskExecutor.submit(transferThread);
-                futureTransfer.get();
-                LOGGER.info("Executing Transfer Detail Thread");
-                taskExecutor.execute(transfersDetailThread);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
+//        taskExecutor.execute(productOnHandByBranchThread);
+//
+//        taskExecutor.execute(() -> {
+//            try {
+//                final Future futureBranch = taskExecutor.submit(branchThread);
+//                final Future futureProduct = taskExecutor.submit(productThread);
+//                futureBranch.get();
+//                futureProduct.get();
+//
+//                taskExecutor.execute(productHistoryThread);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+//        });
+//        taskExecutor.execute(() -> {
+//            try {
+//                LOGGER.info("Executing Order Stock Thread");
+//                final Future futureOrderStock = taskExecutor.submit(orderStockThread);
+//                futureOrderStock.get();
+//                taskExecutor.execute(orderStockDetailThread);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+//        });
+//        taskExecutor.execute(() -> {
+//            try {
+//                LOGGER.info("Executing Return Thread");
+//                final Future futureReturn = taskExecutor.submit(returnThread);
+//                futureReturn.get();
+//                taskExecutor.execute(returnDetailThread);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+//        });
+//        taskExecutor.execute(() -> {
+//            try {
+//                LOGGER.info("Executing Order Thread");
+//                final Future futureOrder = taskExecutor.submit(orderThread);
+//                futureOrder.get();
+//                taskExecutor.execute(orderDetailThread);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+//        });
+//
+//        taskExecutor.execute(() -> {
+//            try {
+//                LOGGER.info("Executing Transfer Thread");
+//                final Future futureTransfer = taskExecutor.submit(transferThread);
+//                futureTransfer.get();
+//                LOGGER.info("Executing Transfer Detail Thread");
+//                taskExecutor.execute(transfersDetailThread);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+//        });
 
         return true;
     }
@@ -255,33 +255,33 @@ public class TaskService {
     }
 
     public Boolean createMigrationTask() throws Exception {
-        taskExecutor.execute(() -> {
-            try {
-                LOGGER.debug("Executing Product Migration");
-                final Future futureWarehouse = taskExecutor.submit(imsWarehouseThread);
-                final Future futureChemical = taskExecutor.submit(imsChemicalThread);
-                final Future futureSupplier = taskExecutor.submit(imsSupplierThread);
-
-                futureWarehouse.get();
-                futureChemical.get();
-                futureSupplier.get();
-
-                taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
-                final Future futureImport = taskExecutor.submit(imsImportGoodsReceiptThread);
-                futureImport.get();
-                final Future futureTransfer = taskExecutor.submit(imsTransferGoodsReceiptThread);
-                futureTransfer.get();
-                final Future futureReturn = taskExecutor.submit(imsReturnGoodsReceiptThread);
-                futureReturn.get();
-                final Future futureRetail = taskExecutor.submit(imsRetailGoodsReceiptThread);
-                futureRetail.get();
-
-                final Future futureOrder = taskExecutor.submit(omsOrderThread);
-                futureOrder.get();
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        });
+//        taskExecutor.execute(() -> {
+//            try {
+//                LOGGER.debug("Executing Product Migration");
+//                final Future futureWarehouse = taskExecutor.submit(imsWarehouseThread);
+//                final Future futureChemical = taskExecutor.submit(imsChemicalThread);
+//                final Future futureSupplier = taskExecutor.submit(imsSupplierThread);
+//
+//                futureWarehouse.get();
+//                futureChemical.get();
+//                futureSupplier.get();
+//
+//                taskExecutor.execute(imsWarehouseChemicalV2Thread); // haimt: new solution
+//                final Future futureImport = taskExecutor.submit(imsImportGoodsReceiptThread);
+//                futureImport.get();
+//                final Future futureTransfer = taskExecutor.submit(imsTransferGoodsReceiptThread);
+//                futureTransfer.get();
+//                final Future futureReturn = taskExecutor.submit(imsReturnGoodsReceiptThread);
+//                futureReturn.get();
+//                final Future futureRetail = taskExecutor.submit(imsRetailGoodsReceiptThread);
+//                futureRetail.get();
+//
+//                final Future futureOrder = taskExecutor.submit(omsOrderThread);
+//                futureOrder.get();
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+//        });
 
         taskExecutor.execute(() -> {
             try {
