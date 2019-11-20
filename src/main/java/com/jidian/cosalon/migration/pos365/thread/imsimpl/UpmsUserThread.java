@@ -192,15 +192,16 @@ public class UpmsUserThread extends MyThread {
             });
 
             amsJdbcTemplate.batchUpdate("update ams_account set " +
-                    "gmt_modified = CURRENT_TIMESTAMP, version = ?, balance = ?," +
+                    "gmt_modified = CURRENT_TIMESTAMP, version = ?, account_name= ?, balance = ?," +
                     "user_id = ?, username = ? where id = ?", new BatchPreparedStatementSetter() {
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     ps.setInt(1, amsAccountUpdates.get(i).getVersion());
-                    ps.setBigDecimal(2, amsAccountUpdates.get(i).getBalance());
-                    ps.setLong(3, amsAccountUpdates.get(i).getUserId());
-                    ps.setString(4, amsAccountUpdates.get(i).getUsername());
-                    ps.setLong(5, amsAccountUpdates.get(i).getId());
+                    ps.setString(2, amsAccountUpdates.get(i).getAccountName());
+                    ps.setBigDecimal(3, amsAccountUpdates.get(i).getBalance());
+                    ps.setLong(4, amsAccountUpdates.get(i).getUserId());
+                    ps.setString(5, amsAccountUpdates.get(i).getUsername());
+                    ps.setLong(6, amsAccountUpdates.get(i).getId());
                 }
 
                 @Override
