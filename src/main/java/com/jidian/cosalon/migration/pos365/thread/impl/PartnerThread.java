@@ -79,7 +79,7 @@ public class PartnerThread extends MyThread {
                                         : categories.getLoyalty());
                                     ps.setString(index++, categories.getModifiedDate());
                                     ps.setString(index++, categories.getName());
-                                    ps.setString(index++, categories.getPhone() == null ? categories.getCode() : categories.getPhone());
+                                    ps.setString(index++, categories.getPhone());
                                     ps.setInt(index++,
                                         categories.getPoint() == null ? 0 : categories.getPoint());
                                     ps.setLong(index++, categories.getRetailerId() == null ? 0
