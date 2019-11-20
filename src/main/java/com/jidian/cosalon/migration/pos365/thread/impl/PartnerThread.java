@@ -1,5 +1,6 @@
 package com.jidian.cosalon.migration.pos365.thread.impl;
 
+import com.jidian.cosalon.migration.pos365.Utils;
 import com.jidian.cosalon.migration.pos365.domainpos365.Pos365Partner;
 import com.jidian.cosalon.migration.pos365.dto.BaseResponse;
 import com.jidian.cosalon.migration.pos365.thread.MyThread;
@@ -79,7 +80,7 @@ public class PartnerThread extends MyThread {
                                         : categories.getLoyalty());
                                     ps.setString(index++, categories.getModifiedDate());
                                     ps.setString(index++, categories.getName());
-                                    ps.setString(index++, categories.getPhone());
+                                    ps.setString(index++, categories.getPhone() == null ? categories.getCode() : Utils.convertPhoneNumber(categories.getPhone()));
                                     ps.setInt(index++,
                                         categories.getPoint() == null ? 0 : categories.getPoint());
                                     ps.setLong(index++, categories.getRetailerId() == null ? 0
