@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,28 +41,39 @@ public class UpmsUserThread extends MyThread {
         try {
             AtomicLong startUserId = new AtomicLong(upmsJdbcTemplate.queryForObject("SELECT MAX(id) from cosalon_upms.upms_user", Long.class) + 1);
             // migrate from p365_partners
-            final List<Pos365Partner> partnersWithOneAccounts = jdbcTemplate
-                    .query(
-                            "select * from p365_partners "
-                                    + " where type = 1 and "
-                                    + " ((lower(code) not like '%h0%') and (lower(code) not like '%f0%') and (lower(code) not like '%CO000%'))" +
-                                    " and phone not in(SELECT phone from cosalon_ims.p365_partners WHERE `type` = 1 and ((lower(code) not like '%h0%') and (lower(code) not like '%f0%') and (lower(code) not like '%CO000%')) GROUP by phone HAVING count(phone) > 1)",
-                            (rs, rowNum) -> {
-                                final Pos365Partner result = new Pos365Partner();
-                                result.setId(rs.getLong("id"));
-                                result.setCode(rs.getString("code"));
-                                result.setName(rs.getString("name"));
-                                result.setPhone(rs.getString("phone"));
-                                result.setDebt(rs.getBigDecimal("debt"));
-                                result.setCreatedDate(rs.getString("created_date"));
-                                result.setModifiedDate(rs.getString("modified_date"));
-                                result.setTotalDebt(rs.getBigDecimal("total_debt").compareTo(BigDecimal.ONE) < 0
-                                        ? rs.getBigDecimal("total_debt").negate() : rs.getBigDecimal("total_debt"));
-                                result.setTransactionValue(rs.getLong("transaction_value"));
-                                result.setTotalTransactionValue(rs.getLong("total_transaction_value"));
-                                return result;
-                            });
+            String queryGetOneAccount = "select * from p365_partners where type = 1 and  ((lower(code) not like '%h0%')" +
+                    " and (lower(code) not like '%f0%') and (lower(code) not like '%CO000%'))" +
+                    " and phone not in(SELECT phone from cosalon_ims.p365_partners WHERE `type` = 1" +
+                    " and ((lower(code) not like '%h0%') and (lower(code) not like '%f0%') and (lower(code) not like '%CO000%')) GROUP by phone HAVING count(phone) > 1)";
+
+            String queryGetThanOneAccount = "select * from p365_partners where type = 1 and  ((lower(code) not like '%h0%')" +
+                    " and (lower(code) not like '%f0%') and (lower(code) not like '%CO000%'))" +
+                    " and phone in(SELECT phone from cosalon_ims.p365_partners WHERE `type` = 1" +
+                    " and ((lower(code) not like '%h0%') and (lower(code) not like '%f0%') and (lower(code) not like '%CO000%')) GROUP by phone HAVING count(phone) > 1)";
+
+            final List<Pos365Partner> partnersWithOneAccounts = getListPos365Partner(queryGetOneAccount);
+            final List<Pos365Partner> partnersThanOneAccounts = getListPos365Partner(queryGetThanOneAccount);
+
+            Map<String, List<Pos365Partner>> map = partnersThanOneAccounts.stream()
+                    .collect(Collectors.groupingBy(Pos365Partner::getPhone));
+
+            map.keySet().forEach(phone -> {
+                List<Pos365Partner> list = map.get(phone);
+                if (list.size() > 1) {
+                    list.sort(Comparator.comparing(Pos365Partner::getCreatedDate));
+                    BigDecimal totalDebt = BigDecimal.ZERO;
+                    for (Pos365Partner partner : list) {
+                        totalDebt = totalDebt.add(partner.getTotalDebt());
+                    }
+                    list.get(0).setTotalDebt(totalDebt);
+
+                }
+                partnersWithOneAccounts.add(list.get(0));
+            });
+
+
             assumptionInsertFromPartner = partnersWithOneAccounts.size();
+
 
             final Map<String, Pos365Partner> pos365PartnerMap = partnersWithOneAccounts.stream().collect(
                     Collectors.toMap(Pos365Partner::getPhone, pos365Partner -> pos365Partner)
@@ -251,5 +263,24 @@ public class UpmsUserThread extends MyThread {
             LOGGER.info("SUMMARY: insert/update to ams_account: {}, pos365 partners total: {}",
                     insertedToAms, assumptionInsertFromPartner);
         }
+    }
+
+    private List<Pos365Partner> getListPos365Partner(String query) {
+        return jdbcTemplate
+                .query(query, (rs, rowNum) -> {
+                    final Pos365Partner result = new Pos365Partner();
+                    result.setId(rs.getLong("id"));
+                    result.setCode(rs.getString("code"));
+                    result.setName(rs.getString("name"));
+                    result.setPhone(rs.getString("phone"));
+                    result.setDebt(rs.getBigDecimal("debt"));
+                    result.setCreatedDate(rs.getString("created_date"));
+                    result.setModifiedDate(rs.getString("modified_date"));
+                    result.setTotalDebt(rs.getBigDecimal("total_debt").compareTo(BigDecimal.ZERO) < 0
+                            ? rs.getBigDecimal("total_debt").negate() : BigDecimal.ZERO);
+                    result.setTransactionValue(rs.getLong("transaction_value"));
+                    result.setTotalTransactionValue(rs.getLong("total_transaction_value"));
+                    return result;
+                });
     }
 }
